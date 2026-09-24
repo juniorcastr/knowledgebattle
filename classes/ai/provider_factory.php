@@ -55,12 +55,22 @@ class provider_factory {
             $provider_name = $instance->ai_provider;
             $model = $instance->ai_model;
         } else {
-            $provider_name = get_config('mod_knowledgebattle', 'default_ai_provider');
-            $model = get_config('mod_knowledgebattle', 'default_ai_model');
+            $provider_name = get_config('mod_knowledgebattle', 'ai_provider');
+            if (empty($provider_name)) {
+                $provider_name = get_config('mod_knowledgebattle', 'default_ai_provider');
+            }
+            $model = get_config('mod_knowledgebattle', 'ai_model');
+            if (empty($model)) {
+                $model = get_config('mod_knowledgebattle', 'default_ai_model');
+            }
         }
 
         if (empty($provider_name)) {
-            $provider_name = 'openai'; // default fallback
+            $provider_name = 'openrouter'; // default fallback
+        }
+
+        if (empty($model)) {
+            $model = ($provider_name === 'openrouter') ? 'google/gemini-2.5-flash' : 'gpt-3.5-turbo';
         }
 
         $apikey = get_config('mod_knowledgebattle', $provider_name . '_apikey');

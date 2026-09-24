@@ -22,6 +22,14 @@ $string['knowledgebattle:viewallstats'] = 'Ver todas as estatísticas';
 $string['knowledgebattle:challengebot'] = 'Desafiar Mestre IA';
 $string['knowledgebattle:generatequestions'] = 'Gerar questões com IA';
 
+// Form sections and headers
+$string['ai_config'] = 'Configuração da Inteligência Artificial';
+$string['content_config'] = 'Configuração do Conteúdo';
+$string['battle_rules'] = 'Regras da Batalha';
+$string['points_config'] = 'Configuração de Pontuação';
+$string['limits_config'] = 'Limites & Oponentes';
+$string['display_config'] = 'Exibição & Critérios de Avaliação';
+
 // Form fields and settings
 $string['ai_provider'] = 'Provedor de IA';
 $string['ai_model'] = 'Modelo de IA';
@@ -32,6 +40,7 @@ $string['pool_size'] = 'Tamanho do Banco';
 $string['questions_per_match'] = 'Questões por Partida';
 $string['time_per_question'] = 'Tempo por Questão (segundos)';
 $string['wo_timeout_hours'] = 'Tempo Limite para W.O. (horas)';
+$string['hours'] = 'horas';
 $string['win_points'] = 'Pontos por Vitória';
 $string['draw_points'] = 'Pontos por Empate';
 $string['loss_points'] = 'Pontos por Derrota';
@@ -40,26 +49,39 @@ $string['max_daily_battles'] = 'Máximo de Batalhas Diárias';
 $string['bot_enabled'] = 'Habilitar Bot IA';
 $string['ranking_visibility'] = 'Visibilidade do Ranking';
 $string['grade_criteria'] = 'Critério de Avaliação';
+$string['mustbepositive'] = 'O valor deve ser um número positivo maior que zero.';
+$string['player'] = 'Jogador';
 
 // Content scope options
 $string['scope_topic'] = 'Tópico Personalizado';
 $string['scope_section'] = 'Seção do Curso';
 $string['scope_resource'] = 'Recurso Específico';
+$string['scope_bank'] = 'Banco de Questões';
 $string['scope_questionbank'] = 'Banco de Questões';
 
 // Supply mode options
+$string['mode_pool'] = 'Pool Pré-gerado';
+$string['mode_ondemand'] = 'Geração Sob Demanda';
 $string['supply_pool'] = 'Baseado em Pool/Banco';
 $string['supply_ondemand'] = 'Geração Sob Demanda';
 
 // Ranking visibility options
 $string['ranking_all'] = 'Todos os Usuários';
 $string['ranking_top10'] = 'Apenas Top 10';
+$string['ranking_teacher'] = 'Apenas Professores';
 $string['ranking_teacheronly'] = 'Apenas Professores';
 
 // Grade criteria options
+$string['crit_points'] = 'Pontuação no Ranking';
+$string['crit_wins'] = 'Número de Vitórias';
+$string['crit_participation'] = 'Participação (Partidas Jogadas)';
 $string['criteria_points'] = 'Pontos Totais';
 $string['criteria_wins'] = 'Número de Vitórias';
 $string['criteria_participation'] = 'Participação (Partidas Jogadas)';
+
+// Completion rules
+$string['completionbattlesgroup'] = 'Batalhas disputadas';
+$string['completionwinsgroup'] = 'Vitórias obtidas';
 
 // Match types
 $string['match_direct'] = 'Desafio Direto';

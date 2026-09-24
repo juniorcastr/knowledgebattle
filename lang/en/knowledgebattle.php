@@ -22,6 +22,14 @@ $string['knowledgebattle:viewallstats'] = 'View all statistics';
 $string['knowledgebattle:challengebot'] = 'Challenge AI Master';
 $string['knowledgebattle:generatequestions'] = 'Generate AI questions';
 
+// Form sections and headers
+$string['ai_config'] = 'AI Configuration';
+$string['content_config'] = 'Content Configuration';
+$string['battle_rules'] = 'Battle Rules';
+$string['points_config'] = 'Score & Points Configuration';
+$string['limits_config'] = 'Limits & Opponents';
+$string['display_config'] = 'Display & Grading Settings';
+
 // Form fields and settings
 $string['ai_provider'] = 'AI Provider';
 $string['ai_model'] = 'AI Model';
@@ -32,6 +40,7 @@ $string['pool_size'] = 'Pool Size';
 $string['questions_per_match'] = 'Questions per Match';
 $string['time_per_question'] = 'Time per Question (seconds)';
 $string['wo_timeout_hours'] = 'W.O. Timeout (hours)';
+$string['hours'] = 'hours';
 $string['win_points'] = 'Win Points';
 $string['draw_points'] = 'Draw Points';
 $string['loss_points'] = 'Loss Points';
@@ -40,26 +49,39 @@ $string['max_daily_battles'] = 'Max Daily Battles';
 $string['bot_enabled'] = 'Enable AI Bot';
 $string['ranking_visibility'] = 'Ranking Visibility';
 $string['grade_criteria'] = 'Grade Criteria';
+$string['mustbepositive'] = 'The value must be a positive number greater than zero.';
+$string['player'] = 'Player';
 
 // Content scope options
 $string['scope_topic'] = 'Custom Topic';
 $string['scope_section'] = 'Course Section';
 $string['scope_resource'] = 'Specific Resource';
+$string['scope_bank'] = 'Question Bank';
 $string['scope_questionbank'] = 'Question Bank';
 
 // Supply mode options
+$string['mode_pool'] = 'Pre-generated Pool';
+$string['mode_ondemand'] = 'On-Demand Generation';
 $string['supply_pool'] = 'Pool-based';
 $string['supply_ondemand'] = 'On-Demand Generation';
 
 // Ranking visibility options
 $string['ranking_all'] = 'All Users';
 $string['ranking_top10'] = 'Top 10 Only';
+$string['ranking_teacher'] = 'Teachers Only';
 $string['ranking_teacheronly'] = 'Teachers Only';
 
 // Grade criteria options
+$string['crit_points'] = 'Total Points in Ranking';
+$string['crit_wins'] = 'Number of Victories';
+$string['crit_participation'] = 'Participation (Matches Played)';
 $string['criteria_points'] = 'Total Points';
 $string['criteria_wins'] = 'Number of Wins';
 $string['criteria_participation'] = 'Participation (Matches Played)';
+
+// Completion rules
+$string['completionbattlesgroup'] = 'Battles played';
+$string['completionwinsgroup'] = 'Victories earned';
 
 // Match types
 $string['match_direct'] = 'Direct Challenge';

@@ -31,25 +31,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
 
         $this->standard_intro_elements();
 
-        // 2. AI Configuration.
-        $mform->addElement('header', 'ai_config_header', get_string('ai_config', 'mod_knowledgebattle'));
-
-        $providers = [
-            'openrouter' => 'OpenRouter',
-            'openai'     => 'OpenAI',
-            'gemini'     => 'Gemini',
-            'claude'     => 'Claude',
-            'deepseek'   => 'DeepSeek',
-            'groq'       => 'Groq',
-            'local_llm'  => 'Local LLM'
-        ];
-        $mform->addElement('select', 'ai_provider', get_string('ai_provider', 'mod_knowledgebattle'), $providers);
-        $mform->setDefault('ai_provider', 'openrouter');
-
-        $mform->addElement('text', 'ai_model', get_string('ai_model', 'mod_knowledgebattle'), ['size' => '50']);
-        $mform->setType('ai_model', PARAM_TEXT);
-
-        // 3. Content Configuration.
+        // 2. Content Configuration.
         $mform->addElement('header', 'content_config_header', get_string('content_config', 'mod_knowledgebattle'));
 
         $scopes = [
@@ -71,7 +53,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('hidden', 'pool_size', 0);
         $mform->setType('pool_size', PARAM_INT);
 
-        // 4. Battle Rules.
+        // 3. Battle Rules.
         $mform->addElement('header', 'battle_rules_header', get_string('battle_rules', 'mod_knowledgebattle'));
 
         $mform->addElement('text', 'questions_per_match', get_string('questions_per_match', 'mod_knowledgebattle'), ['size' => '5']);
@@ -83,15 +65,15 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->setDefault('time_per_question', 30);
 
         $wo_options = [
-            12 => '12 ' . get_string('hours', 'mod_knowledgebattle'),
-            24 => '24 ' . get_string('hours', 'mod_knowledgebattle'),
-            48 => '48 ' . get_string('hours', 'mod_knowledgebattle'),
-            72 => '72 ' . get_string('hours', 'mod_knowledgebattle'),
+            12 => get_string('numhours', 'moodle', 12),
+            24 => get_string('numhours', 'moodle', 24),
+            48 => get_string('numhours', 'moodle', 48),
+            72 => get_string('numhours', 'moodle', 72),
         ];
         $mform->addElement('select', 'wo_timeout_hours', get_string('wo_timeout_hours', 'mod_knowledgebattle'), $wo_options);
         $mform->setDefault('wo_timeout_hours', 24);
 
-        // 5. Points Configuration.
+        // 4. Points Configuration.
         $mform->addElement('header', 'points_header', get_string('points_config', 'mod_knowledgebattle'));
 
         $mform->addElement('text', 'win_points', get_string('win_points', 'mod_knowledgebattle'), ['size' => '5']);
@@ -109,7 +91,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'allow_negative_points', get_string('allow_negative_points', 'mod_knowledgebattle'));
         $mform->setDefault('allow_negative_points', 0);
 
-        // 6. Limits.
+        // 5. Limits.
         $mform->addElement('header', 'limits_header', get_string('limits_config', 'mod_knowledgebattle'));
 
         $mform->addElement('text', 'max_daily_battles', get_string('max_daily_battles', 'mod_knowledgebattle'), ['size' => '5']);
@@ -119,7 +101,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'bot_enabled', get_string('bot_enabled', 'mod_knowledgebattle'));
         $mform->setDefault('bot_enabled', 1);
 
-        // 7. Display & Grading Criteria.
+        // 6. Display & Grading Criteria.
         $mform->addElement('header', 'display_header', get_string('display_config', 'mod_knowledgebattle'));
 
         $vis_options = [
@@ -138,7 +120,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('select', 'grade_criteria', get_string('grade_criteria', 'mod_knowledgebattle'), $crit_options);
         $mform->setDefault('grade_criteria', 1);
 
-        // 8. Standard Moodle elements (called strictly once).
+        // 7. Standard Moodle elements (called strictly once).
         $this->standard_grading_coursemodule_elements();
         $this->standard_coursemodule_elements();
 
