@@ -155,3 +155,4 @@ $string['local_llm_baseurl'] = 'URL Base do LLM Local';
 $string['ai_model_default'] = 'Modelo de IA Padrão';
 $string['global_question_cache_ttl'] = 'TTL do Cache Global de Questões (segundos)';
 $string['antiflood_limit'] = 'Limite Anti-Flood (chamadas/hora)';
+

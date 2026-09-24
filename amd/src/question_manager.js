@@ -80,9 +80,23 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 var qid = $tr.data('id');
                 $('#edit-question-id').val(qid);
 
-                // Populate with existing text
-                var qText = $tr.find('td strong').first().text();
+                // Populate question text
+                var qText = $tr.find('.q-text').text() || $tr.find('td strong').first().text();
                 $('#edit-question-text').val(qText);
+
+                // Populate explanation
+                var explanation = $tr.find('.q-data-explanation').val() || '';
+                $('#edit-explanation').val(explanation);
+
+                // Populate correct radio
+                var correctIndex = parseInt($tr.attr('data-correct') || $tr.data('correct'), 10) || 0;
+                $('input[name="edit-correct"][value="' + correctIndex + '"]').prop('checked', true);
+
+                // Populate options
+                for (var i = 0; i < 4; i++) {
+                    var optVal = $tr.find('.q-data-option-' + i).val() || '';
+                    $('#edit-option-' + i).val(optVal);
+                }
 
                 $('#editQuestionModal').modal('show');
             });
@@ -94,10 +108,10 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 var explanation = $('#edit-explanation').val();
 
                 var options = [
-                    $('#edit-option-0').val() || 'Opção A',
-                    $('#edit-option-1').val() || 'Opção B',
-                    $('#edit-option-2').val() || 'Opção C',
-                    $('#edit-option-3').val() || 'Opção D'
+                    $('#edit-option-0').val() || '',
+                    $('#edit-option-1').val() || '',
+                    $('#edit-option-2').val() || '',
+                    $('#edit-option-3').val() || ''
                 ];
 
                 self.manageQuestion(qid, 'edit', {
@@ -117,10 +131,10 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
             };
 
             if (fields) {
-                if (fields.question_text) args.question_text = fields.question_text;
-                if (fields.options_json) args.options_json = fields.options_json;
+                if (fields.question_text !== undefined) args.question_text = fields.question_text;
+                if (fields.options_json !== undefined) args.options_json = fields.options_json;
                 if (fields.correct_index !== undefined) args.correct_index = fields.correct_index;
-                if (fields.explanation) args.explanation = fields.explanation;
+                if (fields.explanation !== undefined) args.explanation = fields.explanation;
             }
 
             Ajax.call([{

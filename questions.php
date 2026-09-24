@@ -45,12 +45,21 @@ foreach ($questions_records as $q) {
         $discarded++;
     }
 
+    $opts = json_decode($q->options_json, true);
+    if (!is_array($opts)) {
+        $opts = [];
+    }
+
     $questions_list[] = [
         'id' => (int)$q->id,
         'question_text' => $q->question_text,
-        'explanation' => $q->explanation ?? '',
+        'explanation' => (string)($q->explanation ?? ''),
         'difficulty' => $q->difficulty ?? 'medium',
         'options_json' => $q->options_json,
+        'option_0' => (string)($opts[0] ?? ''),
+        'option_1' => (string)($opts[1] ?? ''),
+        'option_2' => (string)($opts[2] ?? ''),
+        'option_3' => (string)($opts[3] ?? ''),
         'correct_index' => (int)$q->correct_index,
         'is_approved' => ($q->status == 1),
         'is_pending' => ($q->status == 0),

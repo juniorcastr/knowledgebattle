@@ -114,42 +114,18 @@ class battle_manager {
     public static function select_questions_for_match(int $battleid, int $count, int $player1id = 0, ?int $player2id = null): array {
         global $DB;
 
-        $battle = $DB->get_record('knowledgebattle', ['id' => $battleid], '*', MUST_EXIST);
+        // Battles strictly draw from approved questions (status = 1) pre-validated by the teacher/admin.
+        // 1. Fetch all approved questions available for this battle.
+        $approved_sql = "SELECT id FROM {knowledgebattle_questions} 
+                          WHERE battleid = ? AND status = 1";
+        $approved_ids = $DB->get_fieldset_sql($approved_sql, [$battleid]);
 
-        // 1. Try to generate fresh questions on-the-fly with AI if provider is configured!
-        try {
-            $context_text = \mod_knowledgebattle\content_extractor::extract_context($battle, (int)$battle->course);
-            if (!empty(trim($context_text))) {
-                $provider = \mod_knowledgebattle\ai\provider_factory::create_from_config($battle);
-                $ai_questions = $provider->generate_quiz($context_text, $count);
-                if (!empty($ai_questions) && count($ai_questions) >= $count) {
-                    $new_ids = [];
-                    $now = time();
-                    foreach (array_slice($ai_questions, 0, $count) as $q) {
-                        $record = new \stdClass();
-                        $record->battleid = $battleid;
-                        $record->question_text = $q->question;
-                        $record->options_json = json_encode($q->options, JSON_UNESCAPED_UNICODE);
-                        $record->correct_index = (int)$q->correct_index;
-                        $record->explanation = $q->explanation ?? '';
-                        $record->difficulty = $q->difficulty ?? 'medium';
-                        $record->status = 1; // Approved for gameplay
-                        $record->source_type = 'ai_generated';
-                        $record->source_question_id = 0;
-                        $record->timecreated = $now;
-                        $record->timemodified = $now;
-                        $new_ids[] = $DB->insert_record('knowledgebattle_questions', $record);
-                    }
-                    if (count($new_ids) >= $count) {
-                        return $new_ids;
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            debugging('KnowledgeBattle: AI generation for match failed: ' . $e->getMessage(), DEBUG_DEVELOPER);
+        if (count($approved_ids) < $count) {
+            // Not enough approved questions in the pool.
+            throw new \moodle_exception('error_no_questions', 'mod_knowledgebattle');
         }
 
-        // 2. Fallback: prioritize approved questions not yet played by Player 1
+        // 2. Prioritize approved questions not yet played by Player 1.
         if ($player1id > 0) {
             $played_sql = "SELECT DISTINCT questionid FROM {knowledgebattle_turns} WHERE userid = ?";
             $played_ids = $DB->get_fieldset_sql($played_sql, [$player1id]);
@@ -161,24 +137,27 @@ class battle_manager {
                     "battleid = :battleid AND status = 1 AND id $notinsql",
                     array_merge(['battleid' => $battleid], $notinparams)
                 );
-                if (count($unplayed) >= $count) {
+                if (!empty($unplayed)) {
                     shuffle($unplayed);
-                    return array_slice($unplayed, 0, $count);
+                    if (count($unplayed) >= $count) {
+                        return array_slice($unplayed, 0, $count);
+                    }
+                    // Take all unplayed approved questions and fill remaining from already played approved questions.
+                    $selected = $unplayed;
+                    $remaining = $count - count($selected);
+                    $played_approved = array_values(array_diff($approved_ids, $unplayed));
+                    shuffle($played_approved);
+                    $selected = array_merge($selected, array_slice($played_approved, 0, $remaining));
+                    if (count($selected) >= $count) {
+                        return $selected;
+                    }
                 }
             }
         }
 
-        // 3. Fallback: random selection from all approved questions
-        $sql = "SELECT id FROM {knowledgebattle_questions} 
-                 WHERE battleid = ? AND status = 1";
-        $questions = $DB->get_fieldset_sql($sql, [$battleid]);
-        
-        if (count($questions) < $count) {
-            throw new \moodle_exception('error_no_questions', 'mod_knowledgebattle');
-        }
-        
-        shuffle($questions);
-        return array_slice($questions, 0, $count);
+        // 3. Fallback: random selection from all approved questions in the pool.
+        shuffle($approved_ids);
+        return array_slice($approved_ids, 0, $count);
     }
 
     /**

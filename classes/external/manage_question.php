@@ -74,9 +74,10 @@ class manage_question extends external_api {
                 $question->options_json = $params['options_json'];
             }
             $question->correct_index = (int)$params['correct_index'];
-            if (!empty($params['explanation'])) {
+            if (isset($params['explanation'])) {
                 $question->explanation = $params['explanation'];
             }
+            $question->status = 1; // When edited and saved by teacher/admin, mark as approved
             $DB->update_record('knowledgebattle_questions', $question);
         } else {
             throw new \invalid_parameter_exception('Invalid action parameter');

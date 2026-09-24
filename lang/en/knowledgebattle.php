@@ -155,3 +155,4 @@ $string['local_llm_baseurl'] = 'Local LLM Base URL';
 $string['ai_model_default'] = 'Default AI Model';
 $string['global_question_cache_ttl'] = 'Global Question Cache TTL (seconds)';
 $string['antiflood_limit'] = 'Anti-Flood Limit (requests/hour)';
+
