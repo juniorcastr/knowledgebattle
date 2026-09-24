@@ -63,8 +63,15 @@ class provider_factory {
             $provider_name = 'openai'; // default fallback
         }
 
-        $apikey = get_config('mod_knowledgebattle', 'apikey_' . $provider_name);
-        $baseurl = get_config('mod_knowledgebattle', 'baseurl_' . $provider_name);
+        $apikey = get_config('mod_knowledgebattle', $provider_name . '_apikey');
+        if (empty($apikey)) {
+            $apikey = get_config('mod_knowledgebattle', 'apikey_' . $provider_name);
+        }
+
+        $baseurl = get_config('mod_knowledgebattle', $provider_name . '_baseurl');
+        if (empty($baseurl)) {
+            $baseurl = get_config('mod_knowledgebattle', 'baseurl_' . $provider_name);
+        }
 
         return self::create($provider_name, (string)$apikey, (string)$model, (string)$baseurl);
     }

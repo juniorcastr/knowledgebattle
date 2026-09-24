@@ -29,7 +29,7 @@ class battle_manager {
         $battle = $DB->get_record('knowledgebattle', ['id' => $battleid], '*', MUST_EXIST);
         $questions_count = $battle->questions_per_match ?? 5; // Fallback if missing
         
-        $questionids = self::select_questions_for_match($battleid, $questions_count);
+        $questionids = self::select_questions_for_match($battleid, $questions_count, $player1id, $player2id);
         
         $now = time();
         $is_bot_match = ($matchtype == 3 || $player2id === 0) ? 1 : 0;
@@ -111,9 +111,64 @@ class battle_manager {
      * @return array
      * @throws \moodle_exception
      */
-    public static function select_questions_for_match(int $battleid, int $count): array {
+    public static function select_questions_for_match(int $battleid, int $count, int $player1id = 0, ?int $player2id = null): array {
         global $DB;
-        
+
+        $battle = $DB->get_record('knowledgebattle', ['id' => $battleid], '*', MUST_EXIST);
+
+        // 1. Try to generate fresh questions on-the-fly with AI if provider is configured!
+        try {
+            $context_text = \mod_knowledgebattle\content_extractor::extract_context($battle, (int)$battle->course);
+            if (!empty(trim($context_text))) {
+                $provider = \mod_knowledgebattle\ai\provider_factory::create_from_config($battle);
+                $ai_questions = $provider->generate_quiz($context_text, $count);
+                if (!empty($ai_questions) && count($ai_questions) >= $count) {
+                    $new_ids = [];
+                    $now = time();
+                    foreach (array_slice($ai_questions, 0, $count) as $q) {
+                        $record = new \stdClass();
+                        $record->battleid = $battleid;
+                        $record->question_text = $q->question;
+                        $record->options_json = json_encode($q->options, JSON_UNESCAPED_UNICODE);
+                        $record->correct_index = (int)$q->correct_index;
+                        $record->explanation = $q->explanation ?? '';
+                        $record->difficulty = $q->difficulty ?? 'medium';
+                        $record->status = 1; // Approved for gameplay
+                        $record->source_type = 'ai_generated';
+                        $record->source_question_id = 0;
+                        $record->timecreated = $now;
+                        $record->timemodified = $now;
+                        $new_ids[] = $DB->insert_record('knowledgebattle_questions', $record);
+                    }
+                    if (count($new_ids) >= $count) {
+                        return $new_ids;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            debugging('KnowledgeBattle: AI generation for match failed: ' . $e->getMessage(), DEBUG_DEVELOPER);
+        }
+
+        // 2. Fallback: prioritize approved questions not yet played by Player 1
+        if ($player1id > 0) {
+            $played_sql = "SELECT DISTINCT questionid FROM {knowledgebattle_turns} WHERE userid = ?";
+            $played_ids = $DB->get_fieldset_sql($played_sql, [$player1id]);
+            if (!empty($played_ids)) {
+                list($notinsql, $notinparams) = $DB->get_in_or_equal($played_ids, SQL_PARAMS_NAMED, 'param', false);
+                $unplayed = $DB->get_fieldset_select(
+                    'knowledgebattle_questions',
+                    'id',
+                    "battleid = :battleid AND status = 1 AND id $notinsql",
+                    array_merge(['battleid' => $battleid], $notinparams)
+                );
+                if (count($unplayed) >= $count) {
+                    shuffle($unplayed);
+                    return array_slice($unplayed, 0, $count);
+                }
+            }
+        }
+
+        // 3. Fallback: random selection from all approved questions
         $sql = "SELECT id FROM {knowledgebattle_questions} 
                  WHERE battleid = ? AND status = 1";
         $questions = $DB->get_fieldset_sql($sql, [$battleid]);
@@ -135,25 +190,39 @@ class battle_manager {
     public static function finalize_match(object $match, object $battle): void {
         global $DB;
 
-        // Calculate scores and times
+        // Calculate scores and times.
         $p1_stats = $DB->get_record_sql(
             "SELECT COUNT(id) as correct_count, SUM(response_time_ms) as total_time 
                FROM {knowledgebattle_turns} 
               WHERE matchid = ? AND userid = ? AND is_correct = 1", 
             [$match->id, $match->player1_id]
         );
+        $p2_userid = ($match->is_bot_match || empty($match->player2_id)) ? 0 : (int)$match->player2_id;
         $p2_stats = $DB->get_record_sql(
             "SELECT COUNT(id) as correct_count, SUM(response_time_ms) as total_time 
                FROM {knowledgebattle_turns} 
               WHERE matchid = ? AND userid = ? AND is_correct = 1", 
-            [$match->id, $match->player2_id]
+            [$match->id, $p2_userid]
         );
 
-        $match->p1_score = $p1_stats->correct_count ?? 0;
-        $match->p1_time_ms = $p1_stats->total_time ?? 0;
-        
-        $match->p2_score = $p2_stats->correct_count ?? 0;
-        $match->p2_time_ms = $p2_stats->total_time ?? 0;
+        $match->p1_score = (int)($p1_stats->correct_count ?? 0);
+        $match->p1_time_ms = (int)($p1_stats->total_time ?? 0);
+        $match->p2_score = (int)($p2_stats->correct_count ?? 0);
+        $match->p2_time_ms = (int)($p2_stats->total_time ?? 0);
+
+        // If scores are tied and both are 0, record total response time across all questions for display.
+        if ($match->p1_score == 0 && $match->p2_score == 0) {
+            $p1_all_time = $DB->get_field_sql(
+                "SELECT SUM(response_time_ms) FROM {knowledgebattle_turns} WHERE matchid = ? AND userid = ?",
+                [$match->id, $match->player1_id]
+            );
+            $p2_all_time = $DB->get_field_sql(
+                "SELECT SUM(response_time_ms) FROM {knowledgebattle_turns} WHERE matchid = ? AND userid = ?",
+                [$match->id, $p2_userid]
+            );
+            $match->p1_time_ms = (int)($p1_all_time ?? 0);
+            $match->p2_time_ms = (int)($p2_all_time ?? 0);
+        }
 
         // Determine winner
         $p2_winner_id = ($match->is_bot_match || empty($match->player2_id)) ? -1 : (int)$match->player2_id;
@@ -167,21 +236,10 @@ class battle_manager {
             $p1_result = 'loss';
             $p2_result = 'win';
         } else {
-            // Tiebreak on time
-            $timediff = abs($match->p1_time_ms - $match->p2_time_ms);
-            if ($timediff < 1000) {
-                $match->winner_id = 0; // draw
-                $p1_result = 'draw';
-                $p2_result = 'draw';
-            } elseif ($match->p1_time_ms < $match->p2_time_ms) {
-                $match->winner_id = $match->player1_id;
-                $p1_result = 'win';
-                $p2_result = 'loss';
-            } else {
-                $match->winner_id = $p2_winner_id;
-                $p1_result = 'loss';
-                $p2_result = 'win';
-            }
+            // Equal scores -> DRAW!
+            $match->winner_id = 0;
+            $p1_result = 'draw';
+            $p2_result = 'draw';
         }
 
         $match->status = 3;
@@ -191,11 +249,11 @@ class battle_manager {
         $DB->update_record('knowledgebattle_matches', $match);
 
         // Update stats
-        $points_p1 = ($p1_result === 'win') ? ($battle->win_points ?? 3) : (($p1_result === 'loss') ? ($battle->loss_points ?? -1) : ($battle->draw_points ?? 1));
+        $points_p1 = ($p1_result === 'win') ? ($battle->win_points ?? 100) : (($p1_result === 'loss') ? ($battle->loss_points ?? -20) : ($battle->draw_points ?? 30));
         self::update_player_stats($battle->id, $match->player1_id, $p1_result, $points_p1, $battle);
 
         if ($match->player2_id > 0) { // Not bot
-            $points_p2 = ($p2_result === 'win') ? ($battle->win_points ?? 3) : (($p2_result === 'loss') ? ($battle->loss_points ?? -1) : ($battle->draw_points ?? 1));
+            $points_p2 = ($p2_result === 'win') ? ($battle->win_points ?? 100) : (($p2_result === 'loss') ? ($battle->loss_points ?? -20) : ($battle->draw_points ?? 30));
             self::update_player_stats($battle->id, $match->player2_id, $p2_result, $points_p2, $battle);
         }
 

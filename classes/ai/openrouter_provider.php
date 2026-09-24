@@ -14,6 +14,19 @@ defined('MOODLE_INTERNAL') || die();
 class openrouter_provider extends base_provider {
 
     public function __construct(string $apikey, string $model, string $baseurl = '') {
+        if (!empty($model) && strpos($model, '/') === false) {
+            if (stripos($model, 'gemini') !== false) {
+                $model = 'google/' . $model;
+            } else if (stripos($model, 'llama') !== false) {
+                $model = 'meta-llama/' . $model;
+            } else if (stripos($model, 'claude') !== false) {
+                $model = 'anthropic/' . $model;
+            } else if (stripos($model, 'gpt') !== false) {
+                $model = 'openai/' . $model;
+            } else if (stripos($model, 'deepseek') !== false) {
+                $model = 'deepseek/' . $model;
+            }
+        }
         parent::__construct($apikey, $model, empty($baseurl) ? 'https://openrouter.ai/api/v1/chat/completions' : $baseurl);
     }
 

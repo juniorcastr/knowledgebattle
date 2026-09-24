@@ -95,6 +95,20 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                 window.location.reload();
             });
 
+            $(document).on('click', '.btn-accept-challenge', function() {
+                var matchId = $(this).data('matchid');
+                if (matchId) {
+                    self.startBattle(1, null, parseInt(matchId, 10));
+                }
+            });
+
+            $(document).on('click', '.btn-view-result', function() {
+                var matchId = $(this).data('matchid');
+                if (matchId) {
+                    self.showResults(parseInt(matchId, 10));
+                }
+            });
+
             $(document).on('click', '#btn-rematch', function() {
                 self.startBattle(self.lastMatchType, self.lastOpponentId);
             });
@@ -108,7 +122,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
             });
         },
 
-        startBattle: function(matchType, opponentId) {
+        startBattle: function(matchType, opponentId, matchId) {
             var self = this;
             var battleId = self.getBattleId();
             if (!battleId) {
@@ -126,7 +140,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
             var args = {
                 battleid: battleId,
                 match_type: parseInt(matchType, 10),
-                opponent_id: opponentId ? parseInt(opponentId, 10) : 0
+                opponent_id: opponentId ? parseInt(opponentId, 10) : 0,
+                matchid: matchId ? parseInt(matchId, 10) : 0
             };
 
             Ajax.call([{
@@ -136,6 +151,11 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                 self.currentMatchId = response.matchid;
                 self.totalQuestions = response.questions_count;
                 self.timeLimit = response.time_per_question;
+                if (response.user_turns_count && response.user_turns_count > 0) {
+                    self.currentQuestionNumber = response.user_turns_count + 1;
+                } else {
+                    self.currentQuestionNumber = 1;
+                }
                 self.loadQuestion();
             }).fail(Notification.exception);
         },
@@ -292,19 +312,36 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                 methodname: 'mod_knowledgebattle_get_battle_result',
                 args: { matchid: self.currentMatchId }
             }])[0].then(function(response) {
-                if (response.is_draw || response.winner_id !== 0) {
+                if (response.is_completed) {
                     self.showResults(self.currentMatchId, response);
                 } else {
-                    setTimeout(function() { self.checkBattleStatus(); }, 8000);
+                    setTimeout(function() { self.checkBattleStatus(); }, 6000);
                 }
             }).fail(function() {
-                setTimeout(function() { self.checkBattleStatus(); }, 8000);
+                setTimeout(function() { self.checkBattleStatus(); }, 6000);
             });
         },
 
         showResults: function(matchid, preloadedResponse) {
             var self = this;
             var renderResults = function(data) {
+                var uScore = (data.user_score !== undefined) ? data.user_score : data.p1_score;
+                var oScore = (data.opp_score !== undefined) ? data.opp_score : data.p2_score;
+                var uTime = (data.user_time_ms !== undefined) ? data.user_time_ms : data.p1_time_ms;
+                var oTime = (data.opp_time_ms !== undefined) ? data.opp_time_ms : data.p2_time_ms;
+
+                var reviewList = (data.questions || []).map(function(q, i) {
+                    return {
+                        id: q.num || (i + 1),
+                        num: q.num || (i + 1),
+                        question: q.question_text,
+                        explanation: q.explanation,
+                        correct: Boolean(q.correct),
+                        user_answer: q.user_answer,
+                        correct_answer: q.correct_answer
+                    };
+                });
+
                 var context = {
                     is_win: data.user_is_winner,
                     is_loss: (!data.user_is_winner && !data.is_draw),
@@ -313,19 +350,17 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                     str_you_lost: 'DERROTA!',
                     str_draw: 'EMPATE!',
                     points_earned: (data.points_earned >= 0 ? '+' : '') + data.points_earned + ' pontos',
-                    p1_score: data.p1_score,
-                    p2_score: data.p2_score,
-                    p1_time: data.p1_time_ms,
-                    p2_time: data.p2_time_ms,
-                    opponent_name: data.p2_name,
-                    questions_review: (data.questions || []).map(function(q, i) {
-                        return {
-                            id: i + 1,
-                            num: i + 1,
-                            question: q.question_text,
-                            explanation: q.explanation
-                        };
-                    })
+                    user_score: uScore,
+                    opp_score: oScore,
+                    user_time: uTime,
+                    opp_time: oTime,
+                    p1_score: uScore,
+                    p2_score: oScore,
+                    p1_time: uTime,
+                    p2_time: oTime,
+                    opponent_name: data.opponent_name || data.p2_name,
+                    has_review: reviewList.length > 0,
+                    questions_review: reviewList
                 };
 
                 Templates.render('mod_knowledgebattle/battle_result', context).then(function(html, js) {
