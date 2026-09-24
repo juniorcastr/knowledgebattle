@@ -137,8 +137,43 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $this->add_action_buttons();
     }
 
+    public function add_completion_rules() {
+        $mform = $this->_form;
+
+        $mform->addElement('checkbox', 'completionbattlesenabled', '', get_string('completionbattles', 'mod_knowledgebattle'));
+        $mform->addElement('text', 'completionbattles', '', ['size' => 3]);
+        $mform->setType('completionbattles', PARAM_INT);
+        $mform->setDefault('completionbattles', 5);
+        $mform->disabledIf('completionbattles', 'completionbattlesenabled', 'notchecked');
+
+        $mform->addElement('checkbox', 'completionwinsenabled', '', get_string('completionwins', 'mod_knowledgebattle'));
+        $mform->addElement('text', 'completionwins', '', ['size' => 3]);
+        $mform->setType('completionwins', PARAM_INT);
+        $mform->setDefault('completionwins', 3);
+        $mform->disabledIf('completionwins', 'completionwinsenabled', 'notchecked');
+
+        return ['completionbattlesenabled', 'completionwinsenabled'];
+    }
+
+    public function completion_rule_enabled($data) {
+        return (!empty($data['completionbattlesenabled']) && !empty($data['completionbattles']))
+            || (!empty($data['completionwinsenabled']) && !empty($data['completionwins']));
+    }
+
     public function data_preprocessing(&$default_values) {
-        // Preprocess anything if needed.
+        parent::data_preprocessing($default_values);
+
+        if (!empty($this->current->customcompletionrules)) {
+            $rules = $this->current->customcompletionrules;
+            if (!empty($rules['completionbattles'])) {
+                $default_values['completionbattlesenabled'] = 1;
+                $default_values['completionbattles'] = $rules['completionbattles'];
+            }
+            if (!empty($rules['completionwins'])) {
+                $default_values['completionwinsenabled'] = 1;
+                $default_values['completionwins'] = $rules['completionwins'];
+            }
+        }
     }
 
     public function validation($data, $files) {

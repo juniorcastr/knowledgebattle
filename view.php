@@ -56,12 +56,24 @@ if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions'
     redirect(new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]));
 } else {
     $has_manage = has_capability('mod/knowledgebattle:managequestions', $context);
-    if ($has_manage) {
-        echo html_writer::link(
-            new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]),
-            get_string('manage_questions_tab', 'mod_knowledgebattle'),
-            ['class' => 'btn btn-secondary mb-3']
-        );
+    $has_report = has_capability('mod/knowledgebattle:viewallstats', $context);
+    if ($has_manage || $has_report) {
+        echo html_writer::start_div('mb-3');
+        if ($has_manage) {
+            echo html_writer::link(
+                new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]),
+                '<i class="fa fa-question-circle"></i> ' . get_string('manage_questions_tab', 'mod_knowledgebattle'),
+                ['class' => 'btn btn-outline-secondary mr-2']
+            );
+        }
+        if ($has_report) {
+            echo html_writer::link(
+                new moodle_url('/mod/knowledgebattle/report.php', ['id' => $cm->id]),
+                '<i class="fa fa-bar-chart"></i> ' . get_string('report_tab', 'mod_knowledgebattle'),
+                ['class' => 'btn btn-outline-info']
+            );
+        }
+        echo html_writer::end_div();
     }
 
     // Fetch user stats.
