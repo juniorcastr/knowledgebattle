@@ -47,11 +47,16 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                     return;
                 }
 
+                var count = parseInt($('#generate-questions-count').val() || 10, 10);
+                if (isNaN(count) || count < 1) {
+                    count = 10;
+                }
+
                 Ajax.call([{
                     methodname: 'mod_knowledgebattle_generate_questions',
                     args: {
                         battleid: battleId,
-                        count: 10
+                        count: count
                     }
                 }])[0].then(function(response) {
                     Notification.addNotification({

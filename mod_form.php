@@ -65,16 +65,11 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->setType('topic_text', PARAM_TEXT);
         $mform->hideIf('topic_text', 'content_scope', 'noteq', 1);
 
-        $modes = [
-            1 => get_string('mode_pool', 'mod_knowledgebattle'),
-            2 => get_string('mode_ondemand', 'mod_knowledgebattle')
-        ];
-        $mform->addElement('select', 'supply_mode', get_string('supply_mode', 'mod_knowledgebattle'), $modes);
-        $mform->setDefault('supply_mode', 1);
+        $mform->addElement('hidden', 'supply_mode', 1);
+        $mform->setType('supply_mode', PARAM_INT);
 
-        $mform->addElement('text', 'pool_size', get_string('pool_size', 'mod_knowledgebattle'), ['size' => '5']);
+        $mform->addElement('hidden', 'pool_size', 0);
         $mform->setType('pool_size', PARAM_INT);
-        $mform->setDefault('pool_size', 30);
 
         // 4. Battle Rules.
         $mform->addElement('header', 'battle_rules_header', get_string('battle_rules', 'mod_knowledgebattle'));
@@ -207,9 +202,6 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
             $errors['topic_text'] = get_string('required');
         }
 
-        if ($data['pool_size'] < 1) {
-            $errors['pool_size'] = get_string('mustbepositive', 'mod_knowledgebattle');
-        }
         if ($data['questions_per_match'] < 1) {
             $errors['questions_per_match'] = get_string('mustbepositive', 'mod_knowledgebattle');
         }
