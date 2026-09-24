@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/knowledgebattle/db" VERSION="20260924" COMMENT="XMLDB file for Moodle mod_knowledgebattle"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="knowledgebattle" COMMENT="Main knowledgebattle table">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100" SEQUENCE="false"/>
+        <FIELD NAME="ai_provider" TYPE="char" LENGTH="50" NOTNULL="false" DEFAULT="openrouter" SEQUENCE="false"/>
+        <FIELD NAME="ai_model" TYPE="char" LENGTH="255" NOTNULL="false" DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="content_scope" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="topic_text" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="supply_mode" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="pool_size" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="30" SEQUENCE="false"/>
+        <FIELD NAME="questions_per_match" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="5" SEQUENCE="false"/>
+        <FIELD NAME="time_per_question" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="30" SEQUENCE="false"/>
+        <FIELD NAME="wo_timeout_hours" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="24" SEQUENCE="false"/>
+        <FIELD NAME="win_points" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100" SEQUENCE="false"/>
+        <FIELD NAME="draw_points" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="30" SEQUENCE="false"/>
+        <FIELD NAME="loss_points" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="-20" SEQUENCE="false"/>
+        <FIELD NAME="allow_negative_points" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="max_daily_battles" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="5" SEQUENCE="false"/>
+        <FIELD NAME="bot_enabled" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="ranking_visibility" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="grade_criteria" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="knowledgebattle_questions" COMMENT="Questions for knowledgebattle">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="battleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="question_text" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="options_json" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="correct_index" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="explanation" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="difficulty" TYPE="char" LENGTH="10" NOTNULL="false" DEFAULT="medium" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="source_type" TYPE="char" LENGTH="20" NOTNULL="false" DEFAULT="ai_generated" SEQUENCE="false"/>
+        <FIELD NAME="source_question_id" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_battle" TYPE="foreign" FIELDS="battleid" REFTABLE="knowledgebattle" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="battleid" UNIQUE="false" FIELDS="battleid"/>
+        <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="knowledgebattle_matches" COMMENT="Matches for knowledgebattle">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="battleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="player1_id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="player2_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="match_type" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="is_bot_match" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+        <FIELD NAME="winner_id" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="p1_score" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="p2_score" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="p1_time_ms" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="p2_time_ms" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timeexpire" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_battle" TYPE="foreign" FIELDS="battleid" REFTABLE="knowledgebattle" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="battleid" UNIQUE="false" FIELDS="battleid"/>
+        <INDEX NAME="player1_id" UNIQUE="false" FIELDS="player1_id"/>
+        <INDEX NAME="player2_id" UNIQUE="false" FIELDS="player2_id"/>
+        <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
+        <INDEX NAME="match_type" UNIQUE="false" FIELDS="match_type"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="knowledgebattle_match_questions" COMMENT="Match questions">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="matchid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="question_order" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_match" TYPE="foreign" FIELDS="matchid" REFTABLE="knowledgebattle_matches" REFFIELDS="id"/>
+        <KEY NAME="fk_question" TYPE="foreign" FIELDS="questionid" REFTABLE="knowledgebattle_questions" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="matchid" UNIQUE="false" FIELDS="matchid"/>
+        <INDEX NAME="questionid" UNIQUE="false" FIELDS="questionid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="knowledgebattle_turns" COMMENT="Match turns">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="matchid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="selected_option" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="-1" SEQUENCE="false"/>
+        <FIELD NAME="is_correct" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="response_time_ms" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_match" TYPE="foreign" FIELDS="matchid" REFTABLE="knowledgebattle_matches" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="matchid" UNIQUE="false" FIELDS="matchid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="knowledgebattle_user_stats" COMMENT="User stats">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="battleid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="current_points" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="matches_played" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="wins" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="losses" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="draws" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="current_streak" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="max_streak" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="last_battle_date" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="daily_battles_count" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_battle" TYPE="foreign" FIELDS="battleid" REFTABLE="knowledgebattle" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="battleid_userid" UNIQUE="true" FIELDS="battleid, userid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
