@@ -1,0 +1,60 @@
+<div class="knowledgebattle-result text-center">
+    <div class="result-header mb-4 p-5 rounded {{#is_win}}bg-success{{/is_win}} {{#is_loss}}bg-danger{{/is_loss}} {{#is_draw}}bg-warning{{/is_draw}} text-white">
+        <h1 class="display-3 font-weight-bold mb-3">
+            {{#is_win}}{{str_you_won}}{{/is_win}}
+            {{#is_loss}}{{str_you_lost}}{{/is_loss}}
+            {{#is_draw}}{{str_draw}}{{/is_draw}}
+        </h1>
+        <h3 class="points-earned">{{points_earned}}</h3>
+    </div>
+
+    <div class="row align-items-center mb-5">
+        <div class="col-4">
+            <h4>Você</h4>
+            <div class="display-4">{{p1_score}}</div>
+            <div class="text-muted small">{{p1_time}}ms</div>
+        </div>
+        <div class="col-4">
+            <h2 class="text-muted">VS</h2>
+        </div>
+        <div class="col-4">
+            <h4>{{opponent_name}}</h4>
+            <div class="display-4">{{p2_score}}</div>
+            <div class="text-muted small">{{p2_time}}ms</div>
+        </div>
+    </div>
+
+    {{#questions_review.length}}
+    <div class="review-section text-left mb-5">
+        <h4 class="mb-3">Revisão das Questões</h4>
+        <div class="accordion" id="reviewAccordion">
+            {{#questions_review}}
+            <div class="card mb-2">
+                <div class="card-header d-flex justify-content-between align-items-center" id="heading{{id}}">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link text-dark {{#correct}}text-success{{/correct}} {{^correct}}text-danger{{/correct}}" type="button" data-toggle="collapse" data-target="#collapse{{id}}">
+                            {{#correct}}<i class="fa fa-check-circle"></i>{{/correct}}
+                            {{^correct}}<i class="fa fa-times-circle"></i>{{/correct}}
+                            Questão {{num}}
+                        </button>
+                    </h5>
+                </div>
+                <div id="collapse{{id}}" class="collapse" data-parent="#reviewAccordion">
+                    <div class="card-body">
+                        <p class="font-weight-bold">{{question}}</p>
+                        <div class="mb-2"><strong>Sua resposta:</strong> <span class="{{#correct}}text-success{{/correct}}{{^correct}}text-danger{{/correct}}">{{user_answer}}</span></div>
+                        {{^correct}}<div class="mb-2"><strong>Resposta correta:</strong> <span class="text-success">{{correct_answer}}</span></div>{{/correct}}
+                        <div class="alert alert-info mt-3 mb-0"><strong>Explicação:</strong> {{explanation}}</div>
+                    </div>
+                </div>
+            </div>
+            {{/questions_review}}
+        </div>
+    </div>
+    {{/questions_review.length}}
+
+    <div class="actions d-flex justify-content-center gap-3">
+        <button class="btn btn-outline-primary btn-lg mx-2" id="btn-back-lobby">Voltar ao Lobby</button>
+        <button class="btn btn-primary btn-lg mx-2" id="btn-rematch">Pedir Revanche</button>
+    </div>
+</div>

@@ -117,3 +117,12 @@ $string['my_stats'] = 'My Stats';
 $string['streak_label'] = 'Streak';
 $string['points_label'] = 'Points';
 $string['task_check_expired'] = 'Check for expired Battle Quiz matches';
+
+$string['dailylimitreached'] = 'You have reached the maximum number of daily battles.';
+$string['notenoughquestions'] = 'Not enough questions available to start the battle.';
+$string['notyourmatch'] = 'You are not a participant in this match.';
+$string['botdisabled'] = 'AI Bot battles are disabled for this activity.';
+$string['alreadyanswered'] = 'You have already answered this question.';
+$string['str_you_won'] = 'You Won!';
+$string['str_you_lost'] = 'You Lost!';
+$string['str_draw'] = 'It\'s a Draw!';

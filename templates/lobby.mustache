@@ -1,0 +1,70 @@
+<div class="knowledgebattle-lobby">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded">
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">{{#str}}points_label, knowledgebattle{{/str}}</span>
+                    <strong class="h4">{{user_stats.current_points}}</strong>
+                </div>
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">Vitórias</span>
+                    <strong class="h4 text-success">{{user_stats.wins}}</strong>
+                </div>
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">{{#str}}streak_label, knowledgebattle{{/str}}</span>
+                    <strong class="h4 text-warning">{{user_stats.current_streak}} 🔥</strong>
+                </div>
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">Posição</span>
+                    <strong class="h4">#{{user_rank}}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Desafio Direto</h5>
+                    <p class="card-text text-muted">Escolha um colega específico para batalhar.</p>
+                    <select id="direct-opponent" class="form-control mb-3">
+                        <option value="">Selecione um oponente...</option>
+                        {{#enrolled_users}}
+                            <option value="{{id}}">{{fullname}}</option>
+                        {{/enrolled_users}}
+                    </select>
+                    <button class="btn btn-primary w-100" id="btn-challenge-direct" disabled>{{#str}}challenge_player, knowledgebattle{{/str}}</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 text-center bg-primary text-white">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h5 class="card-title">Batalha Rápida</h5>
+                    <p class="card-text">Encontre um oponente automaticamente do seu nível.</p>
+                    <button class="btn btn-light w-100 mt-auto font-weight-bold text-primary" id="btn-quick-match">{{#str}}quick_match, knowledgebattle{{/str}}</button>
+                </div>
+            </div>
+        </div>
+
+        {{#bot_enabled}}
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 text-center bg-dark text-white">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h5 class="card-title">Mestre IA</h5>
+                    <p class="card-text">Pratique agora mesmo contra o nosso tutor virtual.</p>
+                    <button class="btn btn-outline-light w-100 mt-auto" id="btn-challenge-bot">{{#str}}challenge_bot, knowledgebattle{{/str}}</button>
+                </div>
+            </div>
+        </div>
+        {{/bot_enabled}}
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <button class="btn btn-outline-primary" id="btn-view-leaderboard">{{#str}}view_leaderboard, knowledgebattle{{/str}}</button>
+        </div>
+    </div>
+</div>

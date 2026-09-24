@@ -1,0 +1,51 @@
+/* mod_knowledgebattle Styles */
+.mod-knowledgebattle {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.mod-knowledgebattle .card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.mod-knowledgebattle .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.knowledgebattle-arena .option-btn {
+    transition: all 0.2s;
+    border-width: 2px;
+}
+
+.knowledgebattle-arena .option-btn:hover:not([disabled]) {
+    transform: scale(1.02);
+}
+
+.knowledgebattle-result .result-header {
+    animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.bg-light-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+
+.bg-light-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+.knowledgebattle-leaderboard .podium-step {
+    width: 120px;
+    transition: transform 0.3s;
+}
+
+.knowledgebattle-leaderboard .podium-step:hover {
+    transform: translateY(-10px);
+}

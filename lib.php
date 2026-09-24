@@ -202,26 +202,71 @@ function knowledgebattle_update_grades($knowledgebattle, $userid=0, $nullifnone=
     if ($knowledgebattle->grade == 0) {
         knowledgebattle_grade_item_update($knowledgebattle);
     } else {
-        // Find grades and update
-        $sql = "SELECT userid, current_points as rawgrade
-                  FROM {knowledgebattle_user_stats}
-                 WHERE battleid = ?";
-        $params = [$knowledgebattle->id];
-
-        if ($userid) {
-            $sql .= " AND userid = ?";
-            $params[] = $userid;
-        }
-
-        if ($rs = $DB->get_recordset_sql($sql, $params)) {
-            foreach ($rs as $grade) {
-                // Determine grade calculation based on criteria if needed
-                // Currently returning current_points
-                knowledgebattle_grade_item_update($knowledgebattle, $grade);
+        if (class_exists('\mod_knowledgebattle\grade_calculator')) {
+            if ($userid) {
+                $gradeval = \mod_knowledgebattle\grade_calculator::calculate_grade($knowledgebattle, $userid);
+                if ($gradeval !== null) {
+                    $grade = new \stdClass();
+                    $grade->userid = $userid;
+                    $grade->rawgrade = $gradeval;
+                    knowledgebattle_grade_item_update($knowledgebattle, $grade);
+                }
+            } else {
+                \mod_knowledgebattle\grade_calculator::update_all_grades($knowledgebattle);
             }
-            $rs->close();
         } else {
             knowledgebattle_grade_item_update($knowledgebattle);
         }
     }
+}
+
+/**
+ * Extends the global navigation.
+ *
+ * @param \global_navigation $nav
+ * @param \stdClass $course
+ * @param \context_module $context
+ */
+function knowledgebattle_extend_navigation_course($nav, $course, $context) {
+    // Only extend if it's the right context
+    if ($context->contextlevel == CONTEXT_MODULE) {
+        $cm = get_coursemodule_from_id('knowledgebattle', $context->instanceid);
+        if ($cm && has_capability('mod/knowledgebattle:view', $context)) {
+            $node = $nav->get('module' . $cm->id);
+            if ($node) {
+                // Add leaderboard node
+                $url = new \moodle_url('/mod/knowledgebattle/leaderboard.php', ['id' => $cm->id]);
+                $node->add(get_string('leaderboard', 'mod_knowledgebattle'), $url, \navigation_node::TYPE_SETTING, null, 'leaderboard');
+                
+                // Add manage questions node
+                if (has_capability('mod/knowledgebattle:managequestions', $context)) {
+                    $url = new \moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]);
+                    $node->add(get_string('manage_questions_tab', 'mod_knowledgebattle'), $url, \navigation_node::TYPE_SETTING, null, 'managequestions');
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Obtains the automatic completion state for this module.
+ *
+ * @param \stdClass $course
+ * @param \cm_info|\stdClass $cm
+ * @param int $userid
+ * @param bool $type
+ * @return bool
+ */
+function knowledgebattle_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+    
+    // For now we assume if the user has played at least 1 match, they have completed the activity.
+    // In a real scenario, this could be tied to a specific threshold in the activity settings.
+    $stats = $DB->get_record('knowledgebattle_user_stats', ['battleid' => $cm->instance, 'userid' => $userid]);
+    
+    if ($stats && $stats->matches_played > 0) {
+        return true;
+    }
+    
+    return false;
 }

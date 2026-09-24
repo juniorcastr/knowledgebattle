@@ -117,3 +117,12 @@ $string['my_stats'] = 'Minhas Estatísticas';
 $string['streak_label'] = 'Ofensiva';
 $string['points_label'] = 'Pontos';
 $string['task_check_expired'] = 'Verificar partidas expiradas da Batalha de Conhecimento';
+
+$string['dailylimitreached'] = 'Você atingiu o limite máximo de batalhas diárias.';
+$string['notenoughquestions'] = 'Não há questões suficientes para iniciar a batalha.';
+$string['notyourmatch'] = 'Você não é um participante desta partida.';
+$string['botdisabled'] = 'Batalhas contra a IA estão desativadas nesta atividade.';
+$string['alreadyanswered'] = 'Você já respondeu a esta questão.';
+$string['str_you_won'] = 'Você Venceu!';
+$string['str_you_lost'] = 'Você Perdeu!';
+$string['str_draw'] = 'Empate!';
