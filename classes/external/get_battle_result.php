@@ -40,13 +40,13 @@ class get_battle_result extends external_api {
         self::validate_context($context);
 
         // Player names.
-        $p1 = $DB->get_record('user', ['id' => $match->player1_id], 'id, firstname, lastname');
+        $p1 = \core_user::get_user($match->player1_id);
         $p1_name = $p1 ? fullname($p1) : get_string('player', 'mod_knowledgebattle');
 
         if (!empty($match->is_bot_match) || empty($match->player2_id)) {
             $p2_name = get_string('challenge_bot', 'mod_knowledgebattle');
         } else {
-            $p2 = $DB->get_record('user', ['id' => $match->player2_id], 'id, firstname, lastname');
+            $p2 = \core_user::get_user($match->player2_id);
             $p2_name = $p2 ? fullname($p2) : get_string('player', 'mod_knowledgebattle');
         }
 
@@ -56,7 +56,7 @@ class get_battle_result extends external_api {
             $winner_name = get_string('draw', 'mod_knowledgebattle');
         } else if ($match->winner_id == $match->player1_id) {
             $winner_name = $p1_name;
-        } else if ($match->winner_id == $match->player2_id) {
+        } else if ($match->winner_id == $match->player2_id || $match->winner_id == -1) {
             $winner_name = $p2_name;
         }
 

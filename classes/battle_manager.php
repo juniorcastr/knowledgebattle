@@ -33,6 +33,9 @@ class battle_manager {
         
         $now = time();
         $is_bot_match = ($matchtype == 3 || $player2id === 0) ? 1 : 0;
+        if ($is_bot_match) {
+            $player2id = 0;
+        }
         
         // Timeout for WO
         $timeout_hours = $battle->wo_timeout_hours ?? 24;
@@ -153,12 +156,14 @@ class battle_manager {
         $match->p2_time_ms = $p2_stats->total_time ?? 0;
 
         // Determine winner
+        $p2_winner_id = ($match->is_bot_match || empty($match->player2_id)) ? -1 : (int)$match->player2_id;
+
         if ($match->p1_score > $match->p2_score) {
             $match->winner_id = $match->player1_id;
             $p1_result = 'win';
             $p2_result = 'loss';
         } elseif ($match->p2_score > $match->p1_score) {
-            $match->winner_id = $match->player2_id;
+            $match->winner_id = $p2_winner_id;
             $p1_result = 'loss';
             $p2_result = 'win';
         } else {
@@ -173,7 +178,7 @@ class battle_manager {
                 $p1_result = 'win';
                 $p2_result = 'loss';
             } else {
-                $match->winner_id = $match->player2_id;
+                $match->winner_id = $p2_winner_id;
                 $p1_result = 'loss';
                 $p2_result = 'win';
             }
@@ -207,12 +212,15 @@ class battle_manager {
 
         // Trigger event
         if (class_exists('\mod_knowledgebattle\event\battle_completed')) {
-            $context = \context_module::instance($battle->coursemodule);
-            $event = \mod_knowledgebattle\event\battle_completed::create([
-                'objectid' => $match->id,
-                'context' => $context
-            ]);
-            $event->trigger();
+            $cm = get_coursemodule_from_instance('knowledgebattle', $battle->id, 0, false);
+            if ($cm) {
+                $context = \context_module::instance($cm->id);
+                $event = \mod_knowledgebattle\event\battle_completed::create([
+                    'objectid' => $match->id,
+                    'context' => $context
+                ]);
+                $event->trigger();
+            }
         }
     }
 

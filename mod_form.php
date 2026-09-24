@@ -14,14 +14,26 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_knowledgebattle_mod_form extends moodleform_mod {
 
     public function definition() {
+        global $CFG;
         $mform = $this->_form;
 
-        // General settings.
-        $this->standard_coursemodule_elements();
+        // 1. General settings section (Name & Description).
+        $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        // AI Configuration.
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '64']);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEANHTML);
+        }
+        $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
+        $this->standard_intro_elements();
+
+        // 2. AI Configuration.
         $mform->addElement('header', 'ai_config_header', get_string('ai_config', 'mod_knowledgebattle'));
-        
+
         $providers = [
             'openrouter' => 'OpenRouter',
             'openai'     => 'OpenAI',
@@ -37,7 +49,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('text', 'ai_model', get_string('ai_model', 'mod_knowledgebattle'), ['size' => '50']);
         $mform->setType('ai_model', PARAM_TEXT);
 
-        // Content Configuration.
+        // 3. Content Configuration.
         $mform->addElement('header', 'content_config_header', get_string('content_config', 'mod_knowledgebattle'));
 
         $scopes = [
@@ -64,7 +76,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->setType('pool_size', PARAM_INT);
         $mform->setDefault('pool_size', 30);
 
-        // Battle Rules.
+        // 4. Battle Rules.
         $mform->addElement('header', 'battle_rules_header', get_string('battle_rules', 'mod_knowledgebattle'));
 
         $mform->addElement('text', 'questions_per_match', get_string('questions_per_match', 'mod_knowledgebattle'), ['size' => '5']);
@@ -84,7 +96,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('select', 'wo_timeout_hours', get_string('wo_timeout_hours', 'mod_knowledgebattle'), $wo_options);
         $mform->setDefault('wo_timeout_hours', 24);
 
-        // Points Configuration.
+        // 5. Points Configuration.
         $mform->addElement('header', 'points_header', get_string('points_config', 'mod_knowledgebattle'));
 
         $mform->addElement('text', 'win_points', get_string('win_points', 'mod_knowledgebattle'), ['size' => '5']);
@@ -102,7 +114,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'allow_negative_points', get_string('allow_negative_points', 'mod_knowledgebattle'));
         $mform->setDefault('allow_negative_points', 0);
 
-        // Limits.
+        // 6. Limits.
         $mform->addElement('header', 'limits_header', get_string('limits_config', 'mod_knowledgebattle'));
 
         $mform->addElement('text', 'max_daily_battles', get_string('max_daily_battles', 'mod_knowledgebattle'), ['size' => '5']);
@@ -112,7 +124,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('advcheckbox', 'bot_enabled', get_string('bot_enabled', 'mod_knowledgebattle'));
         $mform->setDefault('bot_enabled', 1);
 
-        // Display.
+        // 7. Display & Grading Criteria.
         $mform->addElement('header', 'display_header', get_string('display_config', 'mod_knowledgebattle'));
 
         $vis_options = [
@@ -131,47 +143,59 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('select', 'grade_criteria', get_string('grade_criteria', 'mod_knowledgebattle'), $crit_options);
         $mform->setDefault('grade_criteria', 1);
 
+        // 8. Standard Moodle elements (called strictly once).
         $this->standard_grading_coursemodule_elements();
-        $this->standard_coursemodule_elements(true);
+        $this->standard_coursemodule_elements();
 
         $this->add_action_buttons();
     }
 
     public function add_completion_rules() {
         $mform = $this->_form;
+        $suffix = $this->get_suffix();
 
-        $mform->addElement('checkbox', 'completionbattlesenabled', '', get_string('completionbattles', 'mod_knowledgebattle'));
-        $mform->addElement('text', 'completionbattles', '', ['size' => 3]);
-        $mform->setType('completionbattles', PARAM_INT);
-        $mform->setDefault('completionbattles', 5);
-        $mform->disabledIf('completionbattles', 'completionbattlesenabled', 'notchecked');
+        $group = [];
+        $battlesenabled = 'completionbattlesenabled' . $suffix;
+        $group[] = $mform->createElement('checkbox', $battlesenabled, '', get_string('completionbattles', 'mod_knowledgebattle'));
+        $battlesval = 'completionbattles' . $suffix;
+        $group[] = $mform->createElement('text', $battlesval, '', ['size' => 3]);
+        $mform->setType($battlesval, PARAM_INT);
+        $battlesgroup = 'completionbattlesgroup' . $suffix;
+        $mform->addGroup($group, $battlesgroup, '', ' ', false);
+        $mform->hideIf($battlesval, $battlesenabled, 'notchecked');
 
-        $mform->addElement('checkbox', 'completionwinsenabled', '', get_string('completionwins', 'mod_knowledgebattle'));
-        $mform->addElement('text', 'completionwins', '', ['size' => 3]);
-        $mform->setType('completionwins', PARAM_INT);
-        $mform->setDefault('completionwins', 3);
-        $mform->disabledIf('completionwins', 'completionwinsenabled', 'notchecked');
+        $groupwins = [];
+        $winsenabled = 'completionwinsenabled' . $suffix;
+        $groupwins[] = $mform->createElement('checkbox', $winsenabled, '', get_string('completionwins', 'mod_knowledgebattle'));
+        $winsval = 'completionwins' . $suffix;
+        $groupwins[] = $mform->createElement('text', $winsval, '', ['size' => 3]);
+        $mform->setType($winsval, PARAM_INT);
+        $winsgroup = 'completionwinsgroup' . $suffix;
+        $mform->addGroup($groupwins, $winsgroup, '', ' ', false);
+        $mform->hideIf($winsval, $winsenabled, 'notchecked');
 
-        return ['completionbattlesenabled', 'completionwinsenabled'];
+        return [$battlesgroup, $winsgroup];
     }
 
     public function completion_rule_enabled($data) {
-        return (!empty($data['completionbattlesenabled']) && !empty($data['completionbattles']))
-            || (!empty($data['completionwinsenabled']) && !empty($data['completionwins']));
+        $suffix = $this->get_suffix();
+        return (!empty($data['completionbattlesenabled' . $suffix]) && !empty($data['completionbattles' . $suffix]))
+            || (!empty($data['completionwinsenabled' . $suffix]) && !empty($data['completionwins' . $suffix]));
     }
 
     public function data_preprocessing(&$default_values) {
         parent::data_preprocessing($default_values);
 
+        $suffix = $this->get_suffix();
         if (!empty($this->current->customcompletionrules)) {
             $rules = $this->current->customcompletionrules;
             if (!empty($rules['completionbattles'])) {
-                $default_values['completionbattlesenabled'] = 1;
-                $default_values['completionbattles'] = $rules['completionbattles'];
+                $default_values['completionbattlesenabled' . $suffix] = 1;
+                $default_values['completionbattles' . $suffix] = $rules['completionbattles'];
             }
             if (!empty($rules['completionwins'])) {
-                $default_values['completionwinsenabled'] = 1;
-                $default_values['completionwins'] = $rules['completionwins'];
+                $default_values['completionwinsenabled' . $suffix] = 1;
+                $default_values['completionwins' . $suffix] = $rules['completionwins'];
             }
         }
     }

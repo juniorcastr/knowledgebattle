@@ -60,7 +60,8 @@ class get_leaderboard extends external_api {
 
         $total_count = $DB->count_records('knowledgebattle_user_stats', ['battleid' => $battle->id]);
 
-        $sql = "SELECT s.*, u.firstname, u.lastname
+        $userfields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
+        $sql = "SELECT s.*, {$userfields}
                   FROM {knowledgebattle_user_stats} s
                   JOIN {user} u ON u.id = s.userid
                  WHERE s.battleid = ?

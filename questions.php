@@ -71,10 +71,10 @@ $templatecontext = [
 
 echo $OUTPUT->render_from_template('mod_knowledgebattle/question_manager', $templatecontext);
 
-$PAGE->requires->js_call_amd('mod_knowledgebattle/question_manager', 'init', [
+$PAGE->requires->js_call_amd('mod_knowledgebattle/question_manager', 'init', [[
     'cmid' => (int)$cm->id,
     'battleid' => (int)$knowledgebattle->id,
-]);
+]]);
 
 echo html_writer::end_div();
 echo html_writer::link(new moodle_url('/mod/knowledgebattle/view.php', ['id' => $cm->id]), 'Voltar para Atividade', ['class' => 'btn btn-secondary mt-3']);

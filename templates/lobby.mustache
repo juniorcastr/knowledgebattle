@@ -1,4 +1,20 @@
-<div class="knowledgebattle-lobby">
+<div class="knowledgebattle-lobby" data-battleid="{{battleid}}" data-cmid="{{cmid}}">
+    <input type="hidden" id="kb-battleid" value="{{battleid}}">
+    <input type="hidden" id="kb-cmid" value="{{cmid}}">
+    {{^has_enough_questions}}
+    <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+        <div class="mr-3">
+            <i class="fa fa-exclamation-triangle fa-2x text-warning"></i>
+        </div>
+        <div>
+            <strong>Atenção:</strong> Esta batalha necessita de pelo menos <strong>{{min_questions}}</strong> questões aprovadas para iniciar partidas (atualmente existem <strong>{{approved_count}}</strong> aprovadas).
+            {{#has_manage}}
+                <br>Acesse a aba <a href="questions.php?id={{cmid}}" class="alert-link font-weight-bold">Gerenciar Questões</a> para gerar questões com IA ou cadastrá-las.
+            {{/has_manage}}
+        </div>
+    </div>
+    {{/has_enough_questions}}
+
     <div class="row mb-4">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded">
@@ -28,7 +44,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Desafio Direto</h5>
                     <p class="card-text text-muted">Escolha um colega específico para batalhar.</p>
-                    <select id="direct-opponent" class="form-control mb-3">
+                    <select id="direct-opponent" class="form-control mb-3" {{^has_enough_questions}}disabled{{/has_enough_questions}}>
                         <option value="">Selecione um oponente...</option>
                         {{#enrolled_users}}
                             <option value="{{id}}">{{fullname}}</option>
@@ -44,7 +60,7 @@
                 <div class="card-body d-flex flex-column justify-content-center">
                     <h5 class="card-title">Batalha Rápida</h5>
                     <p class="card-text">Encontre um oponente automaticamente do seu nível.</p>
-                    <button class="btn btn-light w-100 mt-auto font-weight-bold text-primary" id="btn-quick-match">{{#str}}quick_match, knowledgebattle{{/str}}</button>
+                    <button class="btn btn-light w-100 mt-auto font-weight-bold text-primary" id="btn-quick-match" {{^has_enough_questions}}disabled title="Aguardando questões aprovadas"{{/has_enough_questions}}>{{#str}}quick_match, knowledgebattle{{/str}}</button>
                 </div>
             </div>
         </div>
@@ -55,7 +71,7 @@
                 <div class="card-body d-flex flex-column justify-content-center">
                     <h5 class="card-title">Mestre IA</h5>
                     <p class="card-text">Pratique agora mesmo contra o nosso tutor virtual.</p>
-                    <button class="btn btn-outline-light w-100 mt-auto" id="btn-challenge-bot">{{#str}}challenge_bot, knowledgebattle{{/str}}</button>
+                    <button class="btn btn-outline-light w-100 mt-auto" id="btn-challenge-bot" {{^has_enough_questions}}disabled title="Aguardando questões aprovadas"{{/has_enough_questions}}>{{#str}}challenge_bot, knowledgebattle{{/str}}</button>
                 </div>
             </div>
         </div>

@@ -14,13 +14,41 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
         lastMatchType: 1,
         lastOpponentId: null,
 
+        getBattleId: function() {
+            var id = (this.params && this.params.battleid) ? this.params.battleid : null;
+            if (!id) {
+                id = $('#kb-battleid').val() ||
+                     $('#knowledgebattle-content').data('battleid') ||
+                     $('.knowledgebattle-lobby').data('battleid') ||
+                     $('[data-battleid]').data('battleid');
+            }
+            return parseInt(id, 10) || 0;
+        },
+
         init: function(params) {
-            this.params = params;
-            this.timeLimit = params.timePerQuestion || 30;
+            if (typeof params === 'object' && params !== null && !Array.isArray(params)) {
+                this.params = params;
+            } else if (arguments.length > 1 || typeof params === 'number') {
+                this.params = {
+                    cmid: arguments[0],
+                    battleid: arguments[1],
+                    currentUserId: arguments[2],
+                    timePerQuestion: arguments[3],
+                    activeMatchId: arguments[4]
+                };
+            } else {
+                this.params = {};
+            }
+
+            if (!this.params.battleid) {
+                this.params.battleid = this.getBattleId();
+            }
+
+            this.timeLimit = this.params.timePerQuestion || 30;
             this.bindEvents();
 
-            if (params.activeMatchId && params.activeMatchId > 0) {
-                this.currentMatchId = params.activeMatchId;
+            if (this.params.activeMatchId && this.params.activeMatchId > 0) {
+                this.currentMatchId = this.params.activeMatchId;
                 this.currentQuestionNumber = 1;
                 this.loadQuestion();
             }
@@ -82,18 +110,24 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
 
         startBattle: function(matchType, opponentId) {
             var self = this;
+            var battleId = self.getBattleId();
+            if (!battleId) {
+                Notification.alert('Erro', 'Identificador da batalha não encontrado. Por favor, recarregue a página.', 'Recarregar', function() {
+                    window.location.reload();
+                });
+                return;
+            }
+
             self.lastMatchType = matchType;
             self.lastOpponentId = opponentId;
             self.currentQuestionNumber = 1;
             self.isLastQuestion = false;
 
             var args = {
-                battleid: self.params.battleid,
-                match_type: matchType
+                battleid: battleId,
+                match_type: parseInt(matchType, 10),
+                opponent_id: opponentId ? parseInt(opponentId, 10) : 0
             };
-            if (opponentId) {
-                args.opponent_id = opponentId;
-            }
 
             Ajax.call([{
                 methodname: 'mod_knowledgebattle_start_battle',
@@ -258,7 +292,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                 methodname: 'mod_knowledgebattle_get_battle_result',
                 args: { matchid: self.currentMatchId }
             }])[0].then(function(response) {
-                if (response.is_draw || response.winner_id > 0) {
+                if (response.is_draw || response.winner_id !== 0) {
                     self.showResults(self.currentMatchId, response);
                 } else {
                     setTimeout(function() { self.checkBattleStatus(); }, 8000);
@@ -312,9 +346,17 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
 
         showLeaderboard: function() {
             var self = this;
+            var battleId = self.getBattleId();
+            if (!battleId) {
+                Notification.alert('Erro', 'Identificador da batalha não encontrado. Por favor, recarregue a página.', 'Recarregar', function() {
+                    window.location.reload();
+                });
+                return;
+            }
+
             Ajax.call([{
                 methodname: 'mod_knowledgebattle_get_leaderboard',
-                args: { battleid: self.params.battleid, page: 0, perpage: 20 }
+                args: { battleid: battleId, page: 0, perpage: 20 }
             }])[0].then(function(response) {
                 var mapped = (response.rankings || []).map(function(r) {
                     return {

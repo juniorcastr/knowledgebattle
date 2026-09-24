@@ -13,6 +13,16 @@ defined('MOODLE_INTERNAL') || die();
 
 class notification_manager {
 
+    private static function get_view_url(object $battle): string {
+        $cmid = $battle->coursemodule ?? 0;
+        if (!$cmid) {
+            $cm = get_coursemodule_from_instance('knowledgebattle', $battle->id, 0, false);
+            $cmid = $cm ? (int)$cm->id : 0;
+        }
+        $url = new \moodle_url('/mod/knowledgebattle/view.php', ['id' => $cmid]);
+        return $url->out(false);
+    }
+
     public static function notify_challenge(object $match, object $battle, int $challengerid, int $challengedid): void {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/message/lib.php');
@@ -21,8 +31,7 @@ class notification_manager {
         $challenged = \core_user::get_user($challengedid);
         $timeout = $battle->wo_timeout_hours ?? 24;
         
-        $url = new \moodle_url('/mod/knowledgebattle/view.php', ['id' => $battle->coursemodule]);
-        $url_string = $url->out(false);
+        $url_string = self::get_view_url($battle);
         
         $message = "{$challenger->firstname} has challenged you to a Knowledge Battle in {$battle->name}! You have {$timeout} hours to respond.\n\nLink: {$url_string}";
         
@@ -51,8 +60,7 @@ class notification_manager {
         $p2 = \core_user::get_user($match->player2_id);
         $noreply = \core_user::get_noreply_user();
         
-        $url = new \moodle_url('/mod/knowledgebattle/view.php', ['id' => $battle->coursemodule]);
-        $url_string = $url->out(false);
+        $url_string = self::get_view_url($battle);
         
         $send_result = function($user, $opponent, $is_winner, $is_draw, $my_score, $opp_score) use ($battle, $noreply, $url_string) {
             $msg = new \core\message\message();
@@ -94,8 +102,7 @@ class notification_manager {
         $user = \core_user::get_user($userid);
         $noreply = \core_user::get_noreply_user();
         
-        $url = new \moodle_url('/mod/knowledgebattle/view.php', ['id' => $battle->coursemodule]);
-        $url_string = $url->out(false);
+        $url_string = self::get_view_url($battle);
         
         $content = "Warning: Your Knowledge Battle in {$battle->name} will expire soon! Respond to avoid losing by W.O.";
         

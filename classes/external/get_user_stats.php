@@ -79,7 +79,7 @@ class get_user_stats extends external_api {
             if (empty($opponent_id) || !empty($m->is_bot_match)) {
                 $opponent_name = get_string('challenge_bot', 'mod_knowledgebattle');
             } else {
-                $opp_user = $DB->get_record('user', ['id' => $opponent_id], 'id, firstname, lastname');
+                $opp_user = \core_user::get_user($opponent_id);
                 $opponent_name = $opp_user ? fullname($opp_user) : get_string('player', 'mod_knowledgebattle');
             }
 

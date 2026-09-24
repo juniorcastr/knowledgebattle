@@ -50,7 +50,11 @@ if (!empty($knowledgebattle->intro)) {
     echo $OUTPUT->box(format_module_intro('knowledgebattle', $knowledgebattle, $cm->id), 'generalbox', 'intro');
 }
 
-echo html_writer::start_div('mod-knowledgebattle', ['id' => 'knowledgebattle-content']);
+echo html_writer::start_div('mod-knowledgebattle', [
+    'id' => 'knowledgebattle-content',
+    'data-battleid' => (int)$knowledgebattle->id,
+    'data-cmid' => (int)$cm->id
+]);
 
 if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions', $context)) {
     redirect(new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]));
@@ -113,25 +117,37 @@ if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions'
         IGNORE_MULTIPLE
     );
 
-    $templatecontext = [
-        'cmid' => $cm->id,
+    // Check approved questions count.
+    $approved_count = $DB->count_records('knowledgebattle_questions', [
         'battleid' => $knowledgebattle->id,
+        'status' => 1
+    ]);
+    $min_questions = (int)($knowledgebattle->questions_per_match ?? 5);
+    $has_enough_questions = ($approved_count >= $min_questions);
+
+    $templatecontext = [
+        'cmid' => (int)$cm->id,
+        'battleid' => (int)$knowledgebattle->id,
         'bot_enabled' => (bool)$knowledgebattle->bot_enabled,
         'enrolled_users' => $enrolled_users,
         'user_stats' => $stats_data,
         'user_rank' => $user_rank,
-        'active_matchid' => $active_match ? (int)$active_match->id : 0
+        'active_matchid' => $active_match ? (int)$active_match->id : 0,
+        'approved_count' => (int)$approved_count,
+        'min_questions' => (int)$min_questions,
+        'has_enough_questions' => (bool)$has_enough_questions,
+        'has_manage' => (bool)$has_manage,
     ];
 
     echo $OUTPUT->render_from_template('mod_knowledgebattle/lobby', $templatecontext);
 
-    $PAGE->requires->js_call_amd('mod_knowledgebattle/battle', 'init', [
+    $PAGE->requires->js_call_amd('mod_knowledgebattle/battle', 'init', [[
         'cmid' => (int)$cm->id,
         'battleid' => (int)$knowledgebattle->id,
         'currentUserId' => (int)$USER->id,
         'timePerQuestion' => (int)($knowledgebattle->time_per_question ?? 30),
         'activeMatchId' => $active_match ? (int)$active_match->id : 0
-    ]);
+    ]]);
 }
 
 echo html_writer::end_div();

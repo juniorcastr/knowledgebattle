@@ -2,8 +2,32 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
     return {
         params: {},
 
+        getBattleId: function() {
+            var id = (this.params && this.params.battleid) ? this.params.battleid : null;
+            if (!id) {
+                id = $('#kb-battleid').val() ||
+                     $('.knowledgebattle-question-manager').data('battleid') ||
+                     $('[data-battleid]').data('battleid');
+            }
+            return parseInt(id, 10) || 0;
+        },
+
         init: function(params) {
-            this.params = params;
+            if (typeof params === 'object' && params !== null && !Array.isArray(params)) {
+                this.params = params;
+            } else if (arguments.length > 1 || typeof params === 'number') {
+                this.params = {
+                    cmid: arguments[0],
+                    battleid: arguments[1]
+                };
+            } else {
+                this.params = {};
+            }
+
+            if (!this.params.battleid) {
+                this.params.battleid = this.getBattleId();
+            }
+
             this.bindEvents();
         },
 
@@ -14,10 +38,19 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 var $btn = $(this);
                 $btn.attr('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Gerando com IA...');
 
+                var battleId = self.getBattleId();
+                if (!battleId) {
+                    Notification.alert('Erro', 'Identificador da batalha não encontrado. Por favor, recarregue a página.', 'Recarregar', function() {
+                        window.location.reload();
+                    });
+                    $btn.attr('disabled', false).html('<i class="fa fa-magic"></i> Gerar Questões');
+                    return;
+                }
+
                 Ajax.call([{
                     methodname: 'mod_knowledgebattle_generate_questions',
                     args: {
-                        battleid: self.params.battleid,
+                        battleid: battleId,
                         count: 10
                     }
                 }])[0].then(function(response) {
