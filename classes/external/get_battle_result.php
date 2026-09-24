@@ -121,9 +121,20 @@ class get_battle_result extends external_api {
             ];
         }
 
+        $opponent_id = 0;
+        if (!empty($match->is_bot_match) || $match->match_type == 3) {
+            $opponent_id = 0;
+        } else if ($match->player1_id == $USER->id) {
+            $opponent_id = (int)($match->player2_id ?? 0);
+        } else {
+            $opponent_id = (int)$match->player1_id;
+        }
+
         return [
             'status' => (int)$match->status,
             'is_completed' => (bool)$is_completed,
+            'match_type' => (int)$match->match_type,
+            'opponent_id' => (int)$opponent_id,
             'p1_name' => $p1_name,
             'p2_name' => $p2_name,
             'opponent_name' => $opponent_name,
@@ -148,6 +159,8 @@ class get_battle_result extends external_api {
         return new external_single_structure([
             'status' => new external_value(PARAM_INT, 'Match status'),
             'is_completed' => new external_value(PARAM_BOOL, 'Is battle completed'),
+            'match_type' => new external_value(PARAM_INT, 'Match type'),
+            'opponent_id' => new external_value(PARAM_INT, 'Opponent ID relative to current user'),
             'p1_name' => new external_value(PARAM_TEXT, 'Player 1 name'),
             'p2_name' => new external_value(PARAM_TEXT, 'Player 2 name'),
             'opponent_name' => new external_value(PARAM_TEXT, 'Opponent name relative to current user'),

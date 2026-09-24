@@ -110,7 +110,15 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
             });
 
             $(document).on('click', '#btn-rematch', function() {
-                self.startBattle(self.lastMatchType, self.lastOpponentId);
+                var btnMatchtype = $(this).data('matchtype');
+                var btnOpponentid = $(this).data('opponentid');
+                var matchType = (btnMatchtype !== undefined && btnMatchtype !== '') ? parseInt(btnMatchtype, 10) : (self.lastMatchType || 2);
+                var opponentId = (btnOpponentid !== undefined && btnOpponentid !== '') ? parseInt(btnOpponentid, 10) : (self.lastOpponentId || 0);
+
+                if (matchType === 1 && !opponentId) {
+                    matchType = 2;
+                }
+                self.startBattle(matchType, opponentId);
             });
 
             $(document).on('change', '#direct-opponent', function() {
@@ -325,6 +333,13 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
         showResults: function(matchid, preloadedResponse) {
             var self = this;
             var renderResults = function(data) {
+                if (data.match_type !== undefined) {
+                    self.lastMatchType = parseInt(data.match_type, 10);
+                }
+                if (data.opponent_id !== undefined) {
+                    self.lastOpponentId = parseInt(data.opponent_id, 10);
+                }
+
                 var uScore = (data.user_score !== undefined) ? data.user_score : data.p1_score;
                 var oScore = (data.opp_score !== undefined) ? data.opp_score : data.p2_score;
                 var uTime = (data.user_time_ms !== undefined) ? data.user_time_ms : data.p1_time_ms;
@@ -343,6 +358,8 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                 });
 
                 var context = {
+                    match_type: data.match_type,
+                    opponent_id: data.opponent_id,
                     is_win: data.user_is_winner,
                     is_loss: (!data.user_is_winner && !data.is_draw),
                     is_draw: data.is_draw,

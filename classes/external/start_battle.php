@@ -113,13 +113,11 @@ class start_battle extends external_api {
         // Mode 1: Direct challenge.
         if ($params['match_type'] == 1) {
             if (empty($params['opponent_id'])) {
-                throw new \invalid_parameter_exception('Opponent ID required for direct challenge');
-            }
-            if ($params['opponent_id'] == $USER->id) {
+                $params['match_type'] = 2; // Fallback to matchmaking pool instead of throwing error.
+            } else if ($params['opponent_id'] == $USER->id) {
                 throw new \moodle_exception('error_invalid_answer', 'mod_knowledgebattle');
-            }
-
-            // Check if there is already an active challenge sent by opponent to current user.
+            } else {
+                // Check if there is already an active challenge sent by opponent to current user.
             $existing_incoming = $DB->get_record_select(
                 'knowledgebattle_matches',
                 'battleid = ? AND match_type = 1 AND player1_id = ? AND player2_id = ? AND status IN (1, 2) AND timeexpire > ?',
@@ -199,6 +197,7 @@ class start_battle extends external_api {
                 'user_turns_count' => 0
             ];
         }
+    }
 
         // Mode 2: Matchmaking pool.
         if ($params['match_type'] == 2) {
