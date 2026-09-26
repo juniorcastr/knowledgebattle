@@ -1,0 +1,76 @@
+<div class="knowledgebattle-result text-center">
+    <div class="result-header mb-4 p-5 rounded {{#is_win}}bg-success{{/is_win}} {{#is_loss}}bg-danger{{/is_loss}} {{#is_draw}}bg-warning text-dark{{/is_draw}} text-white shadow-sm">
+        <h1 class="display-3 font-weight-bold mb-3">
+            {{#is_win}}{{str_you_won}}{{/is_win}}
+            {{#is_loss}}{{str_you_lost}}{{/is_loss}}
+            {{#is_draw}}{{str_draw}}{{/is_draw}}
+        </h1>
+        <h3 class="points-earned font-weight-bold">{{points_earned}}</h3>
+    </div>
+
+    <div class="row align-items-center mb-5 bg-light p-4 rounded shadow-sm">
+        <div class="col-4 text-center">
+            <h4 class="text-primary font-weight-bold mb-2">Você</h4>
+            <div class="display-4 font-weight-bold text-dark">{{user_score}}</div>
+            <div class="text-muted small"><i class="fa fa-clock-o"></i> {{user_time}}ms</div>
+        </div>
+        <div class="col-4 text-center">
+            <h2 class="text-muted font-weight-bold">VS</h2>
+        </div>
+        <div class="col-4 text-center">
+            <h4 class="text-secondary font-weight-bold mb-2">{{opponent_name}}</h4>
+            <div class="display-4 font-weight-bold text-dark">{{opp_score}}</div>
+            <div class="text-muted small"><i class="fa fa-clock-o"></i> {{opp_time}}ms</div>
+        </div>
+    </div>
+
+    {{#has_review}}
+    <div class="review-section text-left mb-5">
+        <h4 class="mb-3 text-dark font-weight-bold"><i class="fa fa-list-alt text-primary mr-2"></i> Revisão das Questões</h4>
+        <div class="review-list">
+            {{#questions_review}}
+            <div class="card mb-3 shadow-sm" style="border-left: 5px solid {{#correct}}#28a745{{/correct}}{{^correct}}#dc3545{{/correct}} !important;">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
+                    <span class="font-weight-bold text-dark">Questão {{num}}</span>
+                    {{#correct}}
+                        <span class="badge badge-success px-2 py-1"><i class="fa fa-check mr-1"></i> Acertou</span>
+                    {{/correct}}
+                    {{^correct}}
+                        <span class="badge badge-danger px-2 py-1"><i class="fa fa-times mr-1"></i> Errou</span>
+                    {{/correct}}
+                </div>
+                <div class="card-body py-3">
+                    <p class="font-weight-bold mb-2 text-dark">{{question}}</p>
+                    <div class="mb-1">
+                        <strong>Sua resposta:</strong>
+                        <span class="{{#correct}}text-success font-weight-bold{{/correct}}{{^correct}}text-danger font-weight-bold{{/correct}}">
+                            {{user_answer}}
+                        </span>
+                    </div>
+                    {{^correct}}
+                    <div class="mb-1">
+                        <strong>Resposta correta:</strong>
+                        <span class="text-success font-weight-bold">{{correct_answer}}</span>
+                    </div>
+                    {{/correct}}
+                    {{#explanation}}
+                    <div class="alert alert-info py-2 px-3 mt-2 mb-0 small rounded">
+                        <i class="fa fa-info-circle mr-1"></i> <strong>Explicação:</strong> {{explanation}}
+                    </div>
+                    {{/explanation}}
+                </div>
+            </div>
+            {{/questions_review}}
+        </div>
+    </div>
+    {{/has_review}}
+
+    <div class="actions d-flex justify-content-center gap-3 mt-4">
+        <button class="btn btn-outline-primary btn-lg mx-2" id="btn-back-lobby">
+            <i class="fa fa-home mr-1"></i> Voltar ao Lobby
+        </button>
+        <button class="btn btn-primary btn-lg mx-2" id="btn-rematch" data-matchtype="{{match_type}}" data-opponentid="{{opponent_id}}">
+            <i class="fa fa-refresh mr-1"></i> Jogar Novamente
+        </button>
+    </div>
+</div>

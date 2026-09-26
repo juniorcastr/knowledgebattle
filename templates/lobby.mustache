@@ -1,0 +1,166 @@
+<div class="knowledgebattle-lobby" data-battleid="{{battleid}}" data-cmid="{{cmid}}">
+    <input type="hidden" id="kb-battleid" value="{{battleid}}">
+    <input type="hidden" id="kb-cmid" value="{{cmid}}">
+    {{^has_enough_questions}}
+    <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+        <div class="mr-3">
+            <i class="fa fa-exclamation-triangle fa-2x text-warning"></i>
+        </div>
+        <div>
+            <strong>Atenção:</strong> Esta batalha necessita de pelo menos <strong>{{min_questions}}</strong> questões aprovadas para iniciar partidas (atualmente existem <strong>{{approved_count}}</strong> aprovadas).
+            {{#has_manage}}
+                <br>Acesse a aba <a href="questions.php?id={{cmid}}" class="alert-link font-weight-bold">Gerenciar Questões</a> para gerar questões com IA ou cadastrá-las.
+            {{/has_manage}}
+        </div>
+    </div>
+    {{/has_enough_questions}}
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded shadow-sm">
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">{{#str}}points_label, knowledgebattle{{/str}}</span>
+                    <strong class="h4">{{user_stats.current_points}}</strong>
+                </div>
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">Vitórias</span>
+                    <strong class="h4 text-success">{{user_stats.wins}}</strong>
+                </div>
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">{{#str}}streak_label, knowledgebattle{{/str}}</span>
+                    <strong class="h4 text-warning">{{user_stats.current_streak}} 🔥</strong>
+                </div>
+                <div class="stats-item text-center">
+                    <span class="d-block text-muted">Posição</span>
+                    <strong class="h4">#{{user_rank}}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{#has_incoming_challenges}}
+    <div class="card border-warning mb-4 shadow-sm">
+        <div class="card-header bg-warning text-dark font-weight-bold d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-bolt mr-2"></i> {{#str}}incoming_challenges, knowledgebattle{{/str}}</span>
+            <span class="badge badge-dark px-2 py-1">{{incoming_count}}</span>
+        </div>
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                {{#incoming_challenges}}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div class="d-flex align-items-center">
+                        {{{challenger_avatar}}}
+                        <div class="ml-3">
+                            <span class="h6 mb-1 d-block"><strong>{{challenger_name}}</strong> te desafiou para um duelo!</span>
+                            <small class="text-muted"><i class="fa fa-clock-o"></i> Expira em aprox. {{hours_left}}h • {{questions_count}} questões</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-success font-weight-bold btn-accept-challenge" data-matchid="{{id}}">
+                        <i class="fa fa-play mr-1"></i> {{#str}}accept_and_play, knowledgebattle{{/str}}
+                    </button>
+                </li>
+                {{/incoming_challenges}}
+            </ul>
+        </div>
+    </div>
+    {{/has_incoming_challenges}}
+
+    {{#has_waiting_matches}}
+    <div class="card border-info mb-4 shadow-sm">
+        <div class="card-header bg-light text-info font-weight-bold">
+            <i class="fa fa-hourglass-half mr-2"></i> {{#str}}waiting_matches, knowledgebattle{{/str}}
+        </div>
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                {{#waiting_matches}}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                    <div>
+                        <strong class="text-dark">{{description}}</strong>
+                        <div class="small text-muted">Seu placar: {{p1_score}} acertos • Prazo restante: {{hours_left}}h</div>
+                    </div>
+                    <span class="badge badge-info py-2 px-3"><i class="fa fa-spinner fa-spin mr-1"></i> Aguardando oponente</span>
+                </li>
+                {{/waiting_matches}}
+            </ul>
+        </div>
+    </div>
+    {{/has_waiting_matches}}
+
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 text-center shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title font-weight-bold text-primary"><i class="fa fa-user mr-1"></i> Desafio Direto</h5>
+                    <p class="card-text text-muted small">Escolha um colega específico para duelar de forma assíncrona.</p>
+                    <select id="direct-opponent" class="form-control mb-3" {{^has_enough_questions}}disabled{{/has_enough_questions}}>
+                        <option value="">Selecione um oponente...</option>
+                        {{#enrolled_users}}
+                            <option value="{{id}}">{{fullname}}</option>
+                        {{/enrolled_users}}
+                    </select>
+                    <button class="btn btn-primary w-100 mt-auto" id="btn-challenge-direct" disabled>
+                        <i class="fa fa-paper-plane mr-1"></i> {{#str}}challenge_player, knowledgebattle{{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 text-center bg-primary text-white shadow-sm">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h5 class="card-title font-weight-bold"><i class="fa fa-random mr-1"></i> Batalha Rápida</h5>
+                    <p class="card-text small text-white-50">Encontre automaticamente um oponente do seu nível no Matchmaking.</p>
+                    <button class="btn btn-light w-100 mt-auto font-weight-bold text-primary" id="btn-quick-match" {{^has_enough_questions}}disabled title="Aguardando questões aprovadas"{{/has_enough_questions}}>
+                        <i class="fa fa-flash mr-1"></i> {{#str}}quick_match, knowledgebattle{{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{#bot_enabled}}
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 text-center bg-dark text-white shadow-sm">
+                <div class="card-body d-flex flex-column justify-content-center">
+                    <h5 class="card-title font-weight-bold"><i class="fa fa-android mr-1"></i> Mestre IA</h5>
+                    <p class="card-text small text-white-50">Pratique agora mesmo contra o tutor virtual e receba feedback instantâneo.</p>
+                    <button class="btn btn-outline-light w-100 mt-auto font-weight-bold" id="btn-challenge-bot" {{^has_enough_questions}}disabled title="Aguardando questões aprovadas"{{/has_enough_questions}}>
+                        <i class="fa fa-gamepad mr-1"></i> {{#str}}challenge_bot, knowledgebattle{{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{/bot_enabled}}
+    </div>
+
+    {{#has_recent_matches}}
+    <div class="card mb-4 mt-3 shadow-sm">
+        <div class="card-header bg-light font-weight-bold">
+            <i class="fa fa-history text-secondary mr-2"></i> {{#str}}recent_matches, knowledgebattle{{/str}}
+        </div>
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                {{#recent_matches}}
+                <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                    <div>
+                        <span class="badge {{badge_class}} mr-2 px-2 py-1">{{result_label}}</span>
+                        vs <strong>{{opponent_name}}</strong> ({{score_text}})
+                        <span class="small text-muted ml-2">• {{date}}</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary btn-view-result" data-matchid="{{id}}">
+                        <i class="fa fa-eye mr-1"></i> {{#str}}view_result, knowledgebattle{{/str}}
+                    </button>
+                </li>
+                {{/recent_matches}}
+            </ul>
+        </div>
+    </div>
+    {{/has_recent_matches}}
+
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <button class="btn btn-outline-secondary px-4 py-2" id="btn-view-leaderboard">
+                <i class="fa fa-trophy text-warning mr-1"></i> {{#str}}view_leaderboard, knowledgebattle{{/str}}
+            </button>
+        </div>
+    </div>
+</div>

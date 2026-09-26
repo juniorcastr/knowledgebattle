@@ -1,1 +1,22 @@
+# Docs repository (sub-repo)
 knowledgebattle-docs
+
+# Packaging and distribution archives
+*.zip
+*.tar.gz
+*.tgz
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Node / NPM / Grunt local caches
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.grunt/

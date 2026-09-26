@@ -1,0 +1,8 @@
+# Git attributes for mod_knowledgebattle
+# Files marked with export-ignore are omitted from release archives (git archive)
+
+.gitattributes export-ignore
+.gitignore export-ignore
+knowledgebattle-docs export-ignore
+package.sh export-ignore
+.github export-ignore

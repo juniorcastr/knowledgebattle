@@ -1,0 +1,62 @@
+<div class="knowledgebattle-leaderboard">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>{{#str}}leaderboard, knowledgebattle{{/str}}</h2>
+        <button class="btn btn-outline-secondary" id="btn-back-lobby">Voltar</button>
+    </div>
+
+    {{#rankings.length}}
+    <div class="podium d-flex justify-content-center align-items-end mb-5 text-center">
+        {{#top2}}
+        <div class="podium-step step-2 mx-2">
+            <div class="avatar mb-2 bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width:60px;height:60px; font-size:24px;">🥈</div>
+            <div class="name font-weight-bold">{{name}}</div>
+            <div class="points bg-secondary text-white p-2 rounded-top" style="height: 80px;">{{points}} pts</div>
+        </div>
+        {{/top2}}
+        {{#top1}}
+        <div class="podium-step step-1 mx-2">
+            <div class="avatar mb-2 bg-warning rounded-circle mx-auto d-flex align-items-center justify-content-center text-white" style="width:80px;height:80px; font-size:32px;">👑</div>
+            <div class="name font-weight-bold">{{name}}</div>
+            <div class="points bg-warning text-dark p-2 rounded-top font-weight-bold" style="height: 120px;">{{points}} pts</div>
+        </div>
+        {{/top1}}
+        {{#top3}}
+        <div class="podium-step step-3 mx-2">
+            <div class="avatar mb-2 bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width:60px;height:60px; font-size:24px;">🥉</div>
+            <div class="name font-weight-bold">{{name}}</div>
+            <div class="points" style="background-color: #cd7f32; color: white; padding: 0.5rem; border-radius: 0.25rem 0.25rem 0 0; height: 60px;">{{points}} pts</div>
+        </div>
+        {{/top3}}
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped text-center align-middle">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Rank</th>
+                    <th class="text-left">Jogador</th>
+                    <th>Pontos</th>
+                    <th>Vitórias</th>
+                    <th>Derrotas</th>
+                    <th>Ofensiva</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#rankings}}
+                <tr class="{{#is_me}}table-primary font-weight-bold{{/is_me}}">
+                    <td>#{{rank}}</td>
+                    <td class="text-left">{{name}} {{#is_me}}(Você){{/is_me}}</td>
+                    <td>{{points}}</td>
+                    <td class="text-success">{{wins}}</td>
+                    <td class="text-danger">{{losses}}</td>
+                    <td>{{streak}} 🔥</td>
+                </tr>
+                {{/rankings}}
+            </tbody>
+        </table>
+    </div>
+    {{/rankings.length}}
+    {{^rankings.length}}
+        <div class="alert alert-info text-center">Nenhum jogador pontuou ainda. Seja o primeiro!</div>
+    {{/rankings.length}}
+</div>

@@ -1,0 +1,172 @@
+<div class="knowledgebattle-report">
+    <!-- Header Action Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-1">Dashboard Analítico & Rendimento da Turma</h3>
+            <p class="text-muted mb-0">Estatísticas pedagógicas de engajamento, assertividade e rendimento individual.</p>
+        </div>
+        <div>
+            <a href="report.php?id={{cmid}}&action=exportcsv" class="btn btn-outline-success mr-2">
+                <i class="fa fa-download"></i> Exportar CSV
+            </a>
+            <a href="report.php?id={{cmid}}&action=regrade&sesskey={{sesskey}}" class="btn btn-outline-primary" onclick="return confirm('Deseja recalcular todas as notas no Livro de Notas?');">
+                <i class="fa fa-refresh"></i> Recalcular Notas
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-2 col-sm-4 mb-2">
+            <div class="card text-center bg-light border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <span class="text-muted small">Total de Batalhas</span>
+                    <h3 class="font-weight-bold text-primary mb-0">{{stats_summary.total_matches}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4 mb-2">
+            <div class="card text-center bg-light border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <span class="text-muted small">Concluídas</span>
+                    <h3 class="font-weight-bold text-success mb-0">{{stats_summary.completed_matches}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4 mb-2">
+            <div class="card text-center bg-light border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <span class="text-muted small">W.O. (Inatividade)</span>
+                    <h3 class="font-weight-bold text-danger mb-0">{{stats_summary.wo_matches}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4 mb-2">
+            <div class="card text-center bg-light border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <span class="text-muted small">Desafios Diretos</span>
+                    <h3 class="font-weight-bold text-info mb-0">{{stats_summary.direct_matches}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4 mb-2">
+            <div class="card text-center bg-light border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <span class="text-muted small">Batalhas Rápidas</span>
+                    <h3 class="font-weight-bold text-secondary mb-0">{{stats_summary.mm_matches}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4 mb-2">
+            <div class="card text-center bg-light border-0 shadow-sm">
+                <div class="card-body py-3">
+                    <span class="text-muted small">Mestre IA (Bot)</span>
+                    <h3 class="font-weight-bold text-dark mb-0">{{stats_summary.bot_matches}}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pedagogical Diagnostic: Question Accuracy -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white font-weight-bold d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-lightbulb-o text-warning mr-1"></i> Diagnóstico Pedagógico: Assertividade das Questões</span>
+            <span class="badge badge-info">Foco em Revisão</span>
+        </div>
+        <div class="card-body p-0">
+            {{#has_questions}}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width: 50%;">Enunciado da Questão</th>
+                            <th>Dificuldade</th>
+                            <th class="text-center">Respostas</th>
+                            <th class="text-center">Acertos</th>
+                            <th style="width: 25%;">Taxa de Acerto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#questions_analytics}}
+                        <tr class="{{#is_critical}}table-warning{{/is_critical}}">
+                            <td>
+                                <strong>{{question_text}}</strong>
+                                {{#is_critical}}
+                                <div class="text-danger small font-weight-bold mt-1">
+                                    <i class="fa fa-exclamation-triangle"></i> Atenção pedagógica: taxa de erro superior a 50%!
+                                </div>
+                                {{/is_critical}}
+                            </td>
+                            <td><span class="badge badge-secondary">{{difficulty}}</span></td>
+                            <td class="text-center">{{total_answers}}</td>
+                            <td class="text-center">{{correct_answers}}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress flex-grow-1 mr-2" style="height: 12px;">
+                                        <div class="progress-bar {{#is_critical}}bg-danger{{/is_critical}}{{^is_critical}}bg-success{{/is_critical}}"
+                                             role="progressbar" style="width: {{accuracy_pct}}%;"></div>
+                                    </div>
+                                    <span class="font-weight-bold small">{{accuracy_pct}}%</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/questions_analytics}}
+                    </tbody>
+                </table>
+            </div>
+            {{/has_questions}}
+            {{^has_questions}}
+            <div class="p-4 text-center text-muted">Nenhuma resposta registrada ainda para gerar diagnóstico.</div>
+            {{/has_questions}}
+        </div>
+    </div>
+
+    <!-- Student Performance Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white font-weight-bold">
+            <i class="fa fa-users text-primary mr-1"></i> Rendimento Individual dos Alunos ({{stats_summary.total_students}} participantes)
+        </div>
+        <div class="card-body p-0">
+            {{#has_students}}
+            <div class="table-responsive">
+                <table class="table table-hover text-center align-middle mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Posição</th>
+                            <th class="text-left">Aluno</th>
+                            <th>Pontuação</th>
+                            <th>Batalhas</th>
+                            <th>Vitórias</th>
+                            <th>Derrotas</th>
+                            <th>Aproveitamento</th>
+                            <th>Ofensiva (Streak)</th>
+                            <th>Nota Gradebook</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#students_list}}
+                        <tr>
+                            <td><span class="badge badge-pill badge-primary">#{{rank}}</span></td>
+                            <td class="text-left">
+                                <div class="font-weight-bold">{{fullname}}</div>
+                                <div class="text-muted small">{{email}}</div>
+                            </td>
+                            <td class="font-weight-bold text-primary">{{points}} pts</td>
+                            <td>{{matches_played}}</td>
+                            <td class="text-success">{{wins}}</td>
+                            <td class="text-danger">{{losses}}</td>
+                            <td>{{win_rate}}</td>
+                            <td>{{current_streak}} 🔥 <span class="text-muted small">(Máx: {{max_streak}})</span></td>
+                            <td class="font-weight-bold h5 text-success mb-0">{{grade}}</td>
+                        </tr>
+                        {{/students_list}}
+                    </tbody>
+                </table>
+            </div>
+            {{/has_students}}
+            {{^has_students}}
+            <div class="p-4 text-center text-muted">Nenhum aluno disputou batalhas até o momento.</div>
+            {{/has_students}}
+        </div>
+    </div>
+</div>

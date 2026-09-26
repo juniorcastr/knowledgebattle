@@ -1,0 +1,134 @@
+<div class="knowledgebattle-question-manager" data-battleid="{{battleid}}" data-cmid="{{cmid}}">
+    <input type="hidden" id="kb-battleid" value="{{battleid}}">
+    <input type="hidden" id="kb-cmid" value="{{cmid}}">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center bg-light">
+                <div class="card-body">
+                    <h2 class="text-success">{{stats.approved}}</h2>
+                    <div>Aprovadas</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-light">
+                <div class="card-body">
+                    <h2 class="text-warning">{{stats.pending}}</h2>
+                    <div>Pendentes</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center bg-light">
+                <div class="card-body">
+                    <h2 class="text-danger">{{stats.discarded}}</h2>
+                    <div>Descartadas</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+            <div class="input-group">
+                <input type="number" id="generate-questions-count" class="form-control form-control-lg text-center" value="10" min="1" style="max-width: 80px;" title="Quantidade de questões a gerar">
+                <div class="input-group-append">
+                    <button class="btn btn-primary btn-lg" id="btn-generate-questions">
+                        <i class="fa fa-magic"></i> {{#str}}generate_questions_btn, knowledgebattle{{/str}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Questão</th>
+                    <th>Dificuldade</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="questions-table-body">
+                {{#questions}}
+                <tr data-id="{{id}}" data-correct="{{correct_index}}">
+                    <td>
+                        <strong class="q-text">{{question_text}}</strong>
+                        <div class="text-muted small mt-1">Explicação: <span class="q-explanation-display">{{explanation}}</span></div>
+                        <input type="hidden" class="q-data-explanation" value="{{explanation}}">
+                        <input type="hidden" class="q-data-option-0" value="{{option_0}}">
+                        <input type="hidden" class="q-data-option-1" value="{{option_1}}">
+                        <input type="hidden" class="q-data-option-2" value="{{option_2}}">
+                        <input type="hidden" class="q-data-option-3" value="{{option_3}}">
+                    </td>
+                    <td><span class="badge badge-secondary">{{difficulty}}</span></td>
+                    <td>
+                        {{#is_approved}}<span class="badge badge-success">Aprovada</span>{{/is_approved}}
+                        {{#is_pending}}<span class="badge badge-warning">Pendente</span>{{/is_pending}}
+                        {{#is_discarded}}<span class="badge badge-danger">Descartada</span>{{/is_discarded}}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-success btn-approve" {{#is_approved}}disabled{{/is_approved}}>{{#str}}approve, knowledgebattle{{/str}}</button>
+                        <button class="btn btn-sm btn-outline-primary btn-edit">{{#str}}edit_question, knowledgebattle{{/str}}</button>
+                        <button class="btn btn-sm btn-danger btn-discard" {{#is_discarded}}disabled{{/is_discarded}}>{{#str}}discard, knowledgebattle{{/str}}</button>
+                    </td>
+                </tr>
+                {{/questions}}
+                {{^questions}}
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Nenhuma questão encontrada. Gere novas questões usando a IA.</td>
+                </tr>
+                {{/questions}}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editQuestionModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{#str}}edit_question, knowledgebattle{{/str}}</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-question-form">
+                        <input type="hidden" id="edit-question-id">
+                        <div class="form-group">
+                            <label>Enunciado</label>
+                            <textarea class="form-control" id="edit-question-text" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Opções (Marque a correta)</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"><div class="input-group-text"><input type="radio" name="edit-correct" value="0" required></div></div>
+                                <input type="text" class="form-control" id="edit-option-0" required>
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"><div class="input-group-text"><input type="radio" name="edit-correct" value="1"></div></div>
+                                <input type="text" class="form-control" id="edit-option-1" required>
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"><div class="input-group-text"><input type="radio" name="edit-correct" value="2"></div></div>
+                                <input type="text" class="form-control" id="edit-option-2" required>
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend"><div class="input-group-text"><input type="radio" name="edit-correct" value="3"></div></div>
+                                <input type="text" class="form-control" id="edit-option-3" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Explicação</label>
+                            <textarea class="form-control" id="edit-explanation" rows="2" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-question">Salvar Modificações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

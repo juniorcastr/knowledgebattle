@@ -1,0 +1,24 @@
+<div class="knowledgebattle-waiting text-center py-5">
+    <div class="spinner-border text-primary mb-4" role="status" style="width: 4rem; height: 4rem;">
+        <span class="sr-only">Carregando...</span>
+    </div>
+    
+    <h2 class="mb-3">{{#str}}waiting_opponent, knowledgebattle{{/str}}</h2>
+    
+    {{#opponent_name}}
+        <p class="lead">Desafio enviado para <strong>{{opponent_name}}</strong>!</p>
+        <p class="text-muted">Aguardando que o oponente aceite o desafio e conclua suas respostas.</p>
+    {{/opponent_name}}
+    {{^opponent_name}}
+        <p class="lead">Buscando um oponente na fila de batalhas rápidas...</p>
+        <p class="text-muted">Sua pontuação foi registrada. Assim que alguém entrar na fila, o duelo será resolvido!</p>
+    {{/opponent_name}}
+    
+    <div class="alert alert-info d-inline-block mt-3">
+        <i class="fa fa-info-circle"></i> Você será notificado quando o resultado estiver pronto.
+    </div>
+    
+    <div class="mt-5">
+        <button class="btn btn-outline-primary" id="btn-back-lobby">Voltar ao Lobby</button>
+    </div>
+</div>
