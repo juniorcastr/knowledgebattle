@@ -178,3 +178,23 @@ $string['ai_model_default'] = 'Modelo de IA Padrão';
 $string['global_question_cache_ttl'] = 'TTL do Cache Global de Questões (segundos)';
 $string['antiflood_limit'] = 'Limite Anti-Flood (chamadas/hora)';
 
+// Privacy API
+$string['privacy:metadata:knowledgebattle_matches'] = 'Armazena informações sobre as sessões de partida entre jogadores.';
+$string['privacy:metadata:knowledgebattle_matches:player1_id'] = 'O ID do desafiante ou primeiro jogador da partida.';
+$string['privacy:metadata:knowledgebattle_matches:player2_id'] = 'O ID do oponente ou segundo jogador da partida.';
+$string['privacy:metadata:knowledgebattle_matches:winner_id'] = 'O ID do vencedor da partida, ou 0 em caso de empate.';
+$string['privacy:metadata:timecreated'] = 'O timestamp de quando o registro foi criado.';
+$string['privacy:metadata:timecompleted'] = 'O timestamp de quando a partida foi concluída.';
+$string['privacy:metadata:knowledgebattle_turns'] = 'Armazena respostas e informações de turnos submetidos pelos participantes.';
+$string['privacy:metadata:knowledgebattle_turns:userid'] = 'O ID do usuário que respondeu à questão.';
+$string['privacy:metadata:knowledgebattle_turns:answer'] = 'A resposta selecionada pelo usuário.';
+$string['privacy:metadata:knowledgebattle_turns:is_correct'] = 'Indica se a resposta enviada foi correta.';
+$string['privacy:metadata:knowledgebattle_user_stats'] = 'Armazena estatísticas gerais do usuário, pontuação, vitórias e derrotas.';
+$string['privacy:metadata:knowledgebattle_user_stats:userid'] = 'O ID do usuário associado a essas estatísticas.';
+$string['privacy:metadata:knowledgebattle_user_stats:matches_played'] = 'Total de partidas jogadas pelo usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:wins'] = 'Total de partidas vencidas pelo usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:losses'] = 'Total de partidas perdidas pelo usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:draws'] = 'Total de partidas empatadas pelo usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:current_points'] = 'Pontuação total acumulada pelo usuário.';
+
+

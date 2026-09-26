@@ -178,3 +178,23 @@ $string['ai_model_default'] = 'Default AI Model';
 $string['global_question_cache_ttl'] = 'Global Question Cache TTL (seconds)';
 $string['antiflood_limit'] = 'Anti-Flood Limit (requests/hour)';
 
+// Privacy API
+$string['privacy:metadata:knowledgebattle_matches'] = 'Stores information about match sessions between players.';
+$string['privacy:metadata:knowledgebattle_matches:player1_id'] = 'The ID of the challenger or first player in the match.';
+$string['privacy:metadata:knowledgebattle_matches:player2_id'] = 'The ID of the opponent or second player in the match.';
+$string['privacy:metadata:knowledgebattle_matches:winner_id'] = 'The ID of the winner of the match, or 0 in case of draw.';
+$string['privacy:metadata:timecreated'] = 'The timestamp when this record was created.';
+$string['privacy:metadata:timecompleted'] = 'The timestamp when the match was completed.';
+$string['privacy:metadata:knowledgebattle_turns'] = 'Stores answers and turn information submitted by participants.';
+$string['privacy:metadata:knowledgebattle_turns:userid'] = 'The ID of the user who submitted the answer.';
+$string['privacy:metadata:knowledgebattle_turns:answer'] = 'The answer submitted by the user.';
+$string['privacy:metadata:knowledgebattle_turns:is_correct'] = 'Whether the submitted answer was correct.';
+$string['privacy:metadata:knowledgebattle_user_stats'] = 'Stores overall user game statistics, score, wins, and losses.';
+$string['privacy:metadata:knowledgebattle_user_stats:userid'] = 'The ID of the user whose statistics are tracked.';
+$string['privacy:metadata:knowledgebattle_user_stats:matches_played'] = 'The total number of matches played by the user.';
+$string['privacy:metadata:knowledgebattle_user_stats:wins'] = 'The total number of matches won by the user.';
+$string['privacy:metadata:knowledgebattle_user_stats:losses'] = 'The total number of matches lost by the user.';
+$string['privacy:metadata:knowledgebattle_user_stats:draws'] = 'The total number of tied matches for the user.';
+$string['privacy:metadata:knowledgebattle_user_stats:current_points'] = 'The total accumulated score or points of the user.';
+
+
