@@ -183,6 +183,15 @@ $string['help_guide_btn'] = 'Help & User Guide';
 $string['help_guide_title'] = 'Step-by-Step Setup & User Guide';
 $string['help_guide_desc'] = 'Learn how to configure AI keys, set up activities, and manage pedagogical battles.';
 
+// Test AI Connection
+$string['test_ai_connection'] = 'Test AI Connection';
+$string['test_ai_connection_btn'] = 'Test Connection to Model & Provider';
+$string['test_ai_connection_desc'] = 'Click to verify connectivity with the selected AI provider and model above.';
+$string['test_ai_connection_testing'] = 'Testing AI connection...';
+$string['test_ai_connection_success'] = 'Connection successful!';
+$string['test_ai_connection_failed'] = 'AI connection failed';
+$string['test_ai_connection_no_key'] = 'Please provide or save an API key for the selected provider before testing.';
+
 // Privacy API
 $string['privacy:metadata:knowledgebattle_matches'] = 'Stores information about match sessions between players.';
 $string['privacy:metadata:knowledgebattle_matches:player1_id'] = 'The ID of the challenger or first player in the match.';

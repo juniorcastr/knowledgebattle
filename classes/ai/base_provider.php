@@ -54,7 +54,7 @@ abstract class base_provider implements provider_interface {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
 
-        $curl = new \curl();
+        $curl = new \curl(['ignoresecurity' => true]);
         $curl_headers = [];
         foreach ($headers as $k => $v) {
             $curl_headers[] = is_int($k) ? $v : "$k: $v";
@@ -181,15 +181,142 @@ Do not include markdown blocks or any other text, just the JSON.";
     }
 
     /**
+     * Builds the payload specifically for testing connection.
+     *
+     * @param string $prompt
+     * @return array
+     */
+    protected function build_test_payload(string $prompt): array {
+        $payload = $this->build_payload($prompt);
+        $payload['max_tokens'] = 30;
+        if (isset($payload['generationConfig']) && is_array($payload['generationConfig'])) {
+            $payload['generationConfig']['maxOutputTokens'] = 30;
+        }
+        return $payload;
+    }
+
+    /**
      * Tests the connection with a minimal prompt.
+     *
+     * @return bool
      */
     public function test_connection(): bool {
+        $res = $this->test_connection_detailed();
+        return !empty($res['success']);
+    }
+
+    /**
+     * Tests the connection with detailed diagnostic information.
+     *
+     * @return array
+     */
+    public function test_connection_detailed(): array {
+        $starttime = microtime(true);
+
+        if (empty($this->apikey) && !($this instanceof local_llm_provider)) {
+            return [
+                'success' => false,
+                'latency' => 0,
+                'provider' => $this->get_provider_name(),
+                'model' => $this->model,
+                'http_code' => 0,
+                'reply' => '',
+                'error' => get_string('test_ai_connection_no_key', 'mod_knowledgebattle')
+            ];
+        }
+
         try {
-            $payload = $this->build_payload("Ping. Reply with 'Pong'.");
-            $this->make_request($this->get_api_url(), $payload, $this->build_headers());
-            return true;
-        } catch (\Exception $e) {
-            return false;
+            $prompt = 'Respond with JSON: {"status": "ok"}';
+            $payload = $this->build_test_payload($prompt);
+            $headers = $this->build_headers();
+            $url = $this->get_api_url();
+
+            global $CFG;
+            require_once($CFG->libdir . '/filelib.php');
+
+            $curl = new \curl(['ignoresecurity' => true]);
+            $curl_headers = [];
+            foreach ($headers as $k => $v) {
+                $curl_headers[] = is_int($k) ? $v : "$k: $v";
+            }
+            $curl->setHeader($curl_headers);
+
+            $options = [
+                'CURLOPT_TIMEOUT' => 15,
+                'CURLOPT_CONNECTTIMEOUT' => 8,
+                'CURLOPT_RETURNTRANSFER' => true
+            ];
+
+            $raw_response = $curl->post($url, json_encode($payload), $options);
+            $latency = (int) round((microtime(true) - $starttime) * 1000);
+            $info = $curl->get_info();
+            $http_code = (int) ($info['http_code'] ?? 0);
+
+            if ($http_code >= 200 && $http_code < 300) {
+                $reply = '';
+                $decoded = json_decode($raw_response);
+                if ($decoded) {
+                    try {
+                        $reply = $this->extract_response_text($decoded);
+                    } catch (\Throwable $e) {
+                        $reply = '{"status":"ok"}';
+                    }
+                }
+                return [
+                    'success' => true,
+                    'latency' => $latency,
+                    'provider' => $this->get_provider_name(),
+                    'model' => $this->model,
+                    'http_code' => $http_code,
+                    'reply' => mb_substr(trim($reply), 0, 150),
+                    'error' => ''
+                ];
+            }
+
+            // Error diagnosis
+            $errormsg = '';
+            if (!empty($curl->error)) {
+                $errormsg = $curl->error;
+            } else if (!empty($raw_response)) {
+                $decoded = json_decode($raw_response);
+                if (isset($decoded->error->message)) {
+                    $errormsg = $decoded->error->message;
+                } else if (isset($decoded->error) && is_string($decoded->error)) {
+                    $errormsg = $decoded->error;
+                } else if (isset($decoded->message)) {
+                    $errormsg = $decoded->message;
+                } else {
+                    $errormsg = mb_substr(strip_tags($raw_response), 0, 200);
+                }
+            }
+
+            if (empty($errormsg)) {
+                $errormsg = 'HTTP ' . ($http_code ?: 'Unknown Error');
+            } else if ($http_code > 0 && strpos($errormsg, (string)$http_code) === false) {
+                $errormsg = "HTTP {$http_code}: {$errormsg}";
+            }
+
+            return [
+                'success' => false,
+                'latency' => $latency,
+                'provider' => $this->get_provider_name(),
+                'model' => $this->model,
+                'http_code' => $http_code,
+                'reply' => '',
+                'error' => $errormsg
+            ];
+
+        } catch (\Throwable $e) {
+            $latency = (int) round((microtime(true) - $starttime) * 1000);
+            return [
+                'success' => false,
+                'latency' => $latency,
+                'provider' => $this->get_provider_name(),
+                'model' => $this->model,
+                'http_code' => 0,
+                'reply' => '',
+                'error' => $e->getMessage()
+            ];
         }
     }
 

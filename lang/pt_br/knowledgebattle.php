@@ -183,6 +183,15 @@ $string['help_guide_btn'] = 'Ajuda & Guia de Uso';
 $string['help_guide_title'] = 'Guia de Configuração e Uso Passo a Passo';
 $string['help_guide_desc'] = 'Aprenda a configurar chaves de IA, criar atividades e gerenciar batalhas pedagógicas.';
 
+// Test AI Connection
+$string['test_ai_connection'] = 'Testar Conexão com IA';
+$string['test_ai_connection_btn'] = 'Testar Conexão com o Modelo e Provedor';
+$string['test_ai_connection_desc'] = 'Clique para verificar a conectividade com o provedor e modelo selecionados acima.';
+$string['test_ai_connection_testing'] = 'Testando conexão com a IA...';
+$string['test_ai_connection_success'] = 'Conexão realizada com sucesso!';
+$string['test_ai_connection_failed'] = 'Falha na conexão com a IA';
+$string['test_ai_connection_no_key'] = 'Por favor, informe ou salve uma chave de API para o provedor selecionado antes de testar.';
+
 // Privacy API
 $string['privacy:metadata:knowledgebattle_matches'] = 'Armazena informações sobre as sessões de partida entre jogadores.';
 $string['privacy:metadata:knowledgebattle_matches:player1_id'] = 'O ID do desafiante ou primeiro jogador da partida.';

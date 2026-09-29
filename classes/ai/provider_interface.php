@@ -35,6 +35,13 @@ interface provider_interface {
     public function test_connection(): bool;
 
     /**
+     * Tests the connection with detailed diagnostic information.
+     *
+     * @return array Array with keys: success, latency, provider, model, http_code, reply, error.
+     */
+    public function test_connection_detailed(): array;
+
+    /**
      * Gets the display name of the provider.
      *
      * @return string
