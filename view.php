@@ -62,22 +62,42 @@ if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions'
     $has_manage = has_capability('mod/knowledgebattle:managequestions', $context);
     $has_report = has_capability('mod/knowledgebattle:viewallstats', $context);
     if ($has_manage || $has_report) {
-        echo html_writer::start_div('mb-3');
+        echo html_writer::start_div('mb-3 d-flex flex-wrap align-items-center');
         if ($has_manage) {
             echo html_writer::link(
                 new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]),
-                '<i class="fa fa-question-circle"></i> ' . get_string('manage_questions_tab', 'mod_knowledgebattle'),
-                ['class' => 'btn btn-outline-secondary mr-2']
+                '<i class="fa fa-question-circle mr-1 me-1"></i> ' . get_string('manage_questions_tab', 'mod_knowledgebattle'),
+                ['class' => 'btn btn-outline-secondary mr-2 me-2 mb-2']
             );
         }
         if ($has_report) {
             echo html_writer::link(
                 new moodle_url('/mod/knowledgebattle/report.php', ['id' => $cm->id]),
-                '<i class="fa fa-bar-chart"></i> ' . get_string('report_tab', 'mod_knowledgebattle'),
-                ['class' => 'btn btn-outline-info']
+                '<i class="fa fa-bar-chart mr-1 me-1"></i> ' . get_string('report_tab', 'mod_knowledgebattle'),
+                ['class' => 'btn btn-outline-info mr-2 me-2 mb-2']
             );
         }
+        echo html_writer::tag('button',
+            '<i class="fa fa-life-ring mr-1 me-1"></i> ' . get_string('help_guide_btn', 'mod_knowledgebattle'),
+            [
+                'type' => 'button',
+                'class' => 'btn btn-outline-primary mb-2',
+                'id' => 'btn-kb-help-guide',
+                'data-toggle' => 'modal',
+                'data-bs-toggle' => 'modal',
+                'data-target' => '#modal-kb-help',
+                'data-bs-target' => '#modal-kb-help'
+            ]
+        );
         echo html_writer::end_div();
+
+        $is_pt = (strpos(current_language(), 'pt') === 0);
+        $helpcontext = [
+            'is_pt' => $is_pt,
+            'cmid' => (int)$cm->id,
+            'admin_url' => (new moodle_url('/admin/settings.php', ['section' => 'modsettingknowledgebattle']))->out()
+        ];
+        echo $OUTPUT->render_from_template('mod_knowledgebattle/help_modal', $helpcontext);
     }
 
     // Fetch user stats.

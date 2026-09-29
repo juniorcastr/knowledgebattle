@@ -178,6 +178,11 @@ $string['ai_model_default'] = 'Modelo de IA Padrão';
 $string['global_question_cache_ttl'] = 'TTL do Cache Global de Questões (segundos)';
 $string['antiflood_limit'] = 'Limite Anti-Flood (chamadas/hora)';
 
+// Help Guide
+$string['help_guide_btn'] = 'Ajuda & Guia de Uso';
+$string['help_guide_title'] = 'Guia de Configuração e Uso Passo a Passo';
+$string['help_guide_desc'] = 'Aprenda a configurar chaves de IA, criar atividades e gerenciar batalhas pedagógicas.';
+
 // Privacy API
 $string['privacy:metadata:knowledgebattle_matches'] = 'Armazena informações sobre as sessões de partida entre jogadores.';
 $string['privacy:metadata:knowledgebattle_matches:player1_id'] = 'O ID do desafiante ou primeiro jogador da partida.';

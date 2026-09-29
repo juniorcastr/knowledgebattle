@@ -178,6 +178,11 @@ $string['ai_model_default'] = 'Default AI Model';
 $string['global_question_cache_ttl'] = 'Global Question Cache TTL (seconds)';
 $string['antiflood_limit'] = 'Anti-Flood Limit (requests/hour)';
 
+// Help Guide
+$string['help_guide_btn'] = 'Help & User Guide';
+$string['help_guide_title'] = 'Step-by-Step Setup & User Guide';
+$string['help_guide_desc'] = 'Learn how to configure AI keys, set up activities, and manage pedagogical battles.';
+
 // Privacy API
 $string['privacy:metadata:knowledgebattle_matches'] = 'Stores information about match sessions between players.';
 $string['privacy:metadata:knowledgebattle_matches:player1_id'] = 'The ID of the challenger or first player in the match.';
