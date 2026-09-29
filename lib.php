@@ -49,6 +49,9 @@ function knowledgebattle_add_instance($data, $mform) {
     if (!isset($data->allow_negative_points)) {
         $data->allow_negative_points = 0;
     }
+    if (isset($data->content_scope) && (int)$data->content_scope !== 1) {
+        $data->topic_text = '';
+    }
 
     $id = $DB->insert_record('knowledgebattle', $data);
     $data->id = $id;
@@ -74,6 +77,9 @@ function knowledgebattle_update_instance($data, $mform) {
     // Handle checkboxes
     $data->bot_enabled = !empty($data->bot_enabled) ? 1 : 0;
     $data->allow_negative_points = !empty($data->allow_negative_points) ? 1 : 0;
+    if (isset($data->content_scope) && (int)$data->content_scope !== 1) {
+        $data->topic_text = '';
+    }
 
     $DB->update_record('knowledgebattle', $data);
 
