@@ -1,0 +1,423 @@
+<div class="modal fade" id="modal-kb-help" tabindex="-1" role="dialog" aria-labelledby="modal-kb-help-title" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header d-flex justify-content-between align-items-center bg-light border-bottom py-3 px-4">
+                <div class="d-flex align-items-center">
+                    <span class="mr-3 me-3 text-primary" style="font-size: 1.6rem;">
+                        <i class="fa fa-graduation-cap"></i>
+                    </span>
+                    <div>
+                        <h5 class="modal-title font-weight-bold mb-0" id="modal-kb-help-title">
+                            {{#is_pt}}Guia de Configuração e Uso Passo a Passo{{/is_pt}}{{^is_pt}}Step-by-Step Setup & User Guide{{/is_pt}}
+                        </h5>
+                        <small class="text-muted">
+                            {{#is_pt}}Batalha de Conhecimento • Manual completo para docentes e administradores{{/is_pt}}{{^is_pt}}Knowledge Battle • Complete guide for teachers & administrators{{/is_pt}}
+                        </small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <!-- Language selector pills -->
+                    <div class="btn-group btn-group-sm mr-3 me-3" role="group" aria-label="Language Selector">
+                        <button type="button" class="btn btn-sm btn-kb-lang {{#is_pt}}btn-primary text-white active{{/is_pt}}{{^is_pt}}btn-outline-secondary{{/is_pt}}" data-lang="pt">
+                            🇧🇷 Português
+                        </button>
+                        <button type="button" class="btn btn-sm btn-kb-lang {{^is_pt}}btn-primary text-white active{{/is_pt}}{{#is_pt}}btn-outline-secondary{{/is_pt}}" data-lang="en">
+                            🇺🇸 English
+                        </button>
+                    </div>
+                    <button type="button" class="close btn-close" data-dismiss="modal" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-body p-4" style="font-size: 0.95rem; line-height: 1.6;">
+
+                <!-- ============================================================== -->
+                <!-- CONTEÚDO EM PORTUGUÊS                                          -->
+                <!-- ============================================================== -->
+                <div id="kb-help-content-pt" {{^is_pt}}style="display:none;"{{/is_pt}}>
+
+                    <div class="alert alert-info d-flex align-items-center mb-4">
+                        <i class="fa fa-info-circle fa-2x mr-3 me-3 text-info"></i>
+                        <div>
+                            <strong>Bem-vindo à Batalha de Conhecimento!</strong><br>
+                            Este guia apresenta desde a configuração inicial das chaves de Inteligência Artificial no Moodle até a criação de duelos e análise pedagógica dos alunos.
+                        </div>
+                    </div>
+
+                    <!-- PASSO 1 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #0d6efd !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-primary mb-0">
+                                    <i class="fa fa-cogs mr-2 me-2"></i> Passo 1: Configuração Global da IA (Administração do Moodle)
+                                </h5>
+                                <span class="badge badge-primary bg-primary text-white px-2 py-1">Administrador</span>
+                            </div>
+                            <p>Antes de gerar questões pela primeira vez, o administrador do Moodle deve configurar o provedor de IA e a respectiva chave de API:</p>
+                            <ol class="mb-3">
+                                <li class="mb-2">
+                                    Acesse o menu: <strong>Administração do Site &gt; Plugins &gt; Módulos de atividades &gt; Batalha de Conhecimento</strong> 
+                                    {{#admin_url}}<a href="{{admin_url}}" target="_blank" class="badge badge-secondary bg-secondary text-white ml-2 ms-2"><i class="fa fa-external-link"></i> Abrir Configurações</a>{{/admin_url}}
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Provedor de IA (ai_provider):</strong> Selecione o serviço desejado:
+                                    <ul class="mt-1">
+                                        <li><code>OpenRouter</code>: Acesso a múltiplos modelos com uma única chave (Gemini, Claude, GPT, Llama).</li>
+                                        <li><code>OpenAI</code>: Modelos GPT-4o, GPT-4o-mini, etc.</li>
+                                        <li><code>Google Gemini</code>: Modelos Gemini 2.5 Flash, Flash Lite, Pro.</li>
+                                        <li><code>Anthropic Claude</code>: Modelos Claude 3.5 Sonnet, Claude 3.5 Haiku.</li>
+                                        <li><code>DeepSeek</code>: Modelos DeepSeek-Chat, DeepSeek-Reasoner.</li>
+                                        <li><code>Groq</code>: Geração com ultra-baixa latência (Llama 3, Mixtral).</li>
+                                        <li><code>Local LLM</code>: Modelos rodando localmente (ex.: <strong>Ollama</strong> em <code>http://localhost:11434</code>) sem custo de tokens!</li>
+                                    </ul>
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Chave de API:</strong> Cole a sua chave no campo específico do provedor selecionado (ex.: <em>Chave de API OpenRouter</em>, <em>Chave de API Google Gemini</em>, etc.).
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Modelo de IA Padrão (ai_model):</strong> Defina o nome técnico do modelo. Exemplos recomendados:
+                                    <span class="badge badge-light border text-dark ml-1 ms-1">google/gemini-2.5-flash-lite</span>
+                                    <span class="badge badge-light border text-dark ml-1 ms-1">gpt-4o-mini</span>
+                                    <span class="badge badge-light border text-dark ml-1 ms-1">deepseek-chat</span>
+                                </li>
+                                <li>Clique no final da página em <strong>"Salvar mudanças"</strong>.</li>
+                            </ol>
+                            <div class="alert alert-warning py-2 mb-0">
+                                <i class="fa fa-lightbulb-o mr-1 me-1"></i> <strong>Dica de Economia:</strong> Graças ao sistema de banco pré-gerado do plugin, a IA é chamada apenas quando o professor gera questões. Durante as batalhas dos alunos, o consumo de tokens é <strong>zero</strong>!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PASSO 2 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #17a2b8 !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-info mb-0">
+                                    <i class="fa fa-plus-circle mr-2 me-2"></i> Passo 2: Criação e Configuração da Atividade no Curso
+                                </h5>
+                                <span class="badge badge-info bg-info text-white px-2 py-1">Professor</span>
+                            </div>
+                            <p>No curso onde deseja realizar as batalhas, ative a edição e adicione a atividade:</p>
+                            <ol class="mb-3">
+                                <li class="mb-2">
+                                    Clique em <strong>"Adicionar uma atividade ou recurso"</strong> e selecione <strong>"Batalha de Conhecimento"</strong>.
+                                </li>
+                                <li class="mb-2">
+                                    Preencha o <strong>Nome</strong> da atividade (ex.: <em>Duelo de Conhecimento - Biologia Celular</em>) e a descrição opcional.
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Escopo de Conteúdo (Origem das Perguntas):</strong>
+                                    <ul class="mt-1">
+                                        <li><strong>Tópico Personalizado:</strong> Digite livremente o tema no campo <em>Tópico / Texto</em> (campo obrigatório). Ex: <em>"Mitocôndrias, Ciclo de Krebs e Fosforilação Oxidativa"</em>.</li>
+                                        <li><strong>Seção do Curso:</strong> A IA lê automaticamente o sumário e os recursos da seção atual do curso.</li>
+                                        <li><strong>Recurso Específico:</strong> A IA utiliza o conteúdo de uma Página (<code>mod_page</code>), Livro (<code>mod_book</code>) ou Arquivo do curso.</li>
+                                        <li><strong>Banco de Questões:</strong> A IA se baseia nas perguntas cadastradas no Banco de Questões do próprio Moodle.</li>
+                                    </ul>
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Regras da Batalha:</strong>
+                                    Defina a quantidade de questões por partida (padrão: <code>5</code>), o tempo por questão (padrão: <code>30s</code>) e o tempo limite de resposta antes de derrota por W.O. (<code>24h</code>, <code>48h</code>, etc.).
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Pontuação &amp; Gamificação:</strong>
+                                    Ajuste pontos por vitória (<code>100</code>), empate (<code>30</code>), derrota (<code>-20</code>), limite diário de partidas e se o <strong>Mestre IA (Bot)</strong> estará ativado para duelos individuais.
+                                </li>
+                                <li>Salve a atividade clicando em <strong>"Salvar e voltar ao curso"</strong>.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- PASSO 3 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #ffc107 !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-dark mb-0">
+                                    <i class="fa fa-magic mr-2 me-2"></i> Passo 3: Geração e Curadoria das Questões
+                                </h5>
+                                <span class="badge badge-warning bg-warning text-dark px-2 py-1">Professor</span>
+                            </div>
+                            <p>Após criar a atividade, é indispensável gerar e aprovar as perguntas para liberar o jogo aos alunos:</p>
+                            <ol class="mb-3">
+                                <li class="mb-2">
+                                    Acesse a atividade e clique no botão <strong>"Gerenciar Questões"</strong> na parte superior.
+                                </li>
+                                <li class="mb-2">
+                                    No painel superior, escolha a quantidade de questões a criar (ex.: <code>10</code>, <code>20</code> ou <code>30</code>) e clique no botão <strong>"Gerar Questões"</strong>. A IA analisará o escopo configurado e gerará as questões com alternativas e explicações.
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Curadoria Pedagógica:</strong>
+                                    Na tabela de questões pendentes, você pode:
+                                    <ul class="mt-1">
+                                        <li><strong class="text-success"><i class="fa fa-check"></i> Aprovar:</strong> Torna a questão ativa no banco para sorteio nas partidas.</li>
+                                        <li><strong class="text-primary"><i class="fa fa-pencil"></i> Editar:</strong> Abre um modal para ajustar enunciado, alternativas, alternativa correta e explicação.</li>
+                                        <li><strong class="text-danger"><i class="fa fa-trash"></i> Descartar:</strong> Remove a questão do pool.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <div class="alert alert-danger py-2 mb-0">
+                                <i class="fa fa-exclamation-triangle mr-1 me-1"></i> <strong>Trava de Segurança:</strong> Os alunos só conseguem iniciar batalhas quando houver <strong>pelo menos o número mínimo de questões aprovadas</strong> configurado na atividade (padrão: 5).
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PASSO 4 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #198754 !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-success mb-0">
+                                    <i class="fa fa-gamepad mr-2 me-2"></i> Passo 4: Dinâmica de Batalhas (Experiência dos Alunos)
+                                </h5>
+                                <span class="badge badge-success bg-success text-white px-2 py-1">Alunos e Professores</span>
+                            </div>
+                            <p>Os estudantes têm três formas de disputar o conhecimento:</p>
+                            <ul class="mb-3">
+                                <li class="mb-2">
+                                    <strong>1. Desafio Direto:</strong> O aluno escolhe um colega de turma na lista e clica em <em>"Desafiar"</em>. Ele responde suas 5 questões imediatamente; o colega recebe uma notificação no Moodle para aceitar e responder dentro do prazo limite (W.O.).
+                                </li>
+                                <li class="mb-2">
+                                    <strong>2. Batalha Rápida (Matchmaking):</strong> O sistema busca automaticamente um adversário que já jogou e está aguardando oponente, ou coloca o aluno na fila pública.
+                                </li>
+                                <li class="mb-2">
+                                    <strong>3. Desafiar Mestre IA:</strong> Partida instantânea individual contra a inteligência artificial, excelente para praticar em horários sem colegas online.
+                                </li>
+                                <li>
+                                    <strong>Pontuação e Vencedor:</strong> Ao término de ambos os turnos, o vencedor é calculado com base no número de acertos. Em caso de empate no placar, o critério de desempate é a velocidade média de resposta!
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- PASSO 5 -->
+                    <div class="card mb-2 border-0 shadow-sm" style="border-left: 5px solid #6c757d !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-secondary mb-0">
+                                    <i class="fa fa-bar-chart mr-2 me-2"></i> Passo 5: Relatórios e Acompanhamento Pedagógico
+                                </h5>
+                                <span class="badge badge-secondary bg-secondary text-white px-2 py-1">Professor</span>
+                            </div>
+                            <p>Clique no botão <strong>"Relatório da Turma"</strong> na página principal para acompanhar métricas detalhadas:</p>
+                            <ul class="mb-0">
+                                <li class="mb-1"><strong>Taxa de Acertos por Questão:</strong> Identifique tópicos em que a turma apresenta maior dificuldade para reforço em aula.</li>
+                                <li class="mb-1"><strong>Engajamento e Partidas:</strong> Total de partidas realizadas, vitórias, empates e W.O.s.</li>
+                                <li class="mb-1"><strong>Notas Automáticas:</strong> Sincronização direta com o Livro de Notas (Gradebook) conforme o critério escolhido (pontos totais, vitórias ou participação).</li>
+                                <li><strong>Exportação:</strong> Exporte os dados da turma em formato CSV com um clique.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- ENGLISH CONTENT                                                -->
+                <!-- ============================================================== -->
+                <div id="kb-help-content-en" {{#is_pt}}style="display:none;"{{/is_pt}}>
+
+                    <div class="alert alert-info d-flex align-items-center mb-4">
+                        <i class="fa fa-info-circle fa-2x mr-3 me-3 text-info"></i>
+                        <div>
+                            <strong>Welcome to Knowledge Battle!</strong><br>
+                            This step-by-step guide will walk you through everything from configuring your AI provider API keys in Moodle administration to setting up activities, managing quizzes, and tracking student performance.
+                        </div>
+                    </div>
+
+                    <!-- STEP 1 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #0d6efd !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-primary mb-0">
+                                    <i class="fa fa-cogs mr-2 me-2"></i> Step 1: Global AI Configuration (Site Administration)
+                                </h5>
+                                <span class="badge badge-primary bg-primary text-white px-2 py-1">Administrator</span>
+                            </div>
+                            <p>Before generating questions for the first time, your Moodle administrator must configure an AI provider and its API key:</p>
+                            <ol class="mb-3">
+                                <li class="mb-2">
+                                    Navigate to: <strong>Site Administration &gt; Plugins &gt; Activity modules &gt; Knowledge Battle</strong>
+                                    {{#admin_url}}<a href="{{admin_url}}" target="_blank" class="badge badge-secondary bg-secondary text-white ml-2 ms-2"><i class="fa fa-external-link"></i> Open Settings</a>{{/admin_url}}
+                                </li>
+                                <li class="mb-2">
+                                    <strong>AI Provider (ai_provider):</strong> Choose your preferred service:
+                                    <ul class="mt-1">
+                                        <li><code>OpenRouter</code>: Single unified API key for multiple models (Gemini, Claude, GPT, Llama).</li>
+                                        <li><code>OpenAI</code>: Official GPT-4o, GPT-4o-mini, etc.</li>
+                                        <li><code>Google Gemini</code>: Gemini 2.5 Flash, Flash Lite, Pro models.</li>
+                                        <li><code>Anthropic Claude</code>: Claude 3.5 Sonnet, Claude 3.5 Haiku models.</li>
+                                        <li><code>DeepSeek</code>: DeepSeek-Chat, DeepSeek-Reasoner models.</li>
+                                        <li><code>Groq</code>: Ultra-fast inference with open models (Llama 3, Mixtral).</li>
+                                        <li><code>Local LLM</code>: Run local models (e.g., <strong>Ollama</strong> on <code>http://localhost:11434</code>) with zero external API costs!</li>
+                                    </ul>
+                                </li>
+                                <li class="mb-2">
+                                    <strong>API Key:</strong> Paste your API key into the corresponding field for your selected provider (e.g., <em>OpenRouter API Key</em>, <em>Google Gemini API Key</em>).
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Default AI Model (ai_model):</strong> Enter the model identifier. Recommended choices:
+                                    <span class="badge badge-light border text-dark ml-1 ms-1">google/gemini-2.5-flash-lite</span>
+                                    <span class="badge badge-light border text-dark ml-1 ms-1">gpt-4o-mini</span>
+                                    <span class="badge badge-light border text-dark ml-1 ms-1">deepseek-chat</span>
+                                </li>
+                                <li>Scroll to the bottom and click <strong>"Save changes"</strong>.</li>
+                            </ol>
+                            <div class="alert alert-warning py-2 mb-0">
+                                <i class="fa fa-lightbulb-o mr-1 me-1"></i> <strong>Zero-Token Duels:</strong> Thanks to the pre-generated pool architecture, the AI is only called when teachers generate batches of questions. All student battles cost <strong>zero tokens</strong>!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #17a2b8 !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-info mb-0">
+                                    <i class="fa fa-plus-circle mr-2 me-2"></i> Step 2: Creating and Configuring the Activity in a Course
+                                </h5>
+                                <span class="badge badge-info bg-info text-white px-2 py-1">Teacher</span>
+                            </div>
+                            <p>Inside your target course, turn on Edit Mode and add the activity:</p>
+                            <ol class="mb-3">
+                                <li class="mb-2">
+                                    Click <strong>"Add an activity or resource"</strong> and select <strong>"Knowledge Battle"</strong>.
+                                </li>
+                                <li class="mb-2">
+                                    Provide an activity <strong>Name</strong> and optional description.
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Content Scope (Question Source):</strong>
+                                    <ul class="mt-1">
+                                        <li><strong>Custom Topic:</strong> Type your subject directly into the required <em>Topic / Text</em> field. E.g.: <em>"Cellular Respiration, Glycolysis, and ATP Production"</em>.</li>
+                                        <li><strong>Course Section:</strong> The AI automatically extracts summaries and learning materials from the current section.</li>
+                                        <li><strong>Specific Resource:</strong> The AI extracts content from a course Page (<code>mod_page</code>), Book (<code>mod_book</code>), or File resource.</li>
+                                        <li><strong>Question Bank:</strong> Uses questions already stored in your Moodle course Question Bank.</li>
+                                    </ul>
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Battle Rules:</strong> Set questions per match (default: <code>5</code>), time per question in seconds (default: <code>30s</code>), and W.O. timeout before forfeit (<code>24h</code>, <code>48h</code>, etc.).
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Scoring &amp; Gamification:</strong> Configure win points (<code>100</code>), draw points (<code>30</code>), loss points (<code>-20</code>), daily battle limits, AI Bot enablement, and Gradebook criteria.
+                                </li>
+                                <li>Click <strong>"Save and return to course"</strong>.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #ffc107 !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-dark mb-0">
+                                    <i class="fa fa-magic mr-2 me-2"></i> Step 3: Question Generation &amp; Pedagogical Curation
+                                </h5>
+                                <span class="badge badge-warning bg-warning text-dark px-2 py-1">Teacher</span>
+                            </div>
+                            <p>Before students can play, you must generate and approve the question pool:</p>
+                            <ol class="mb-3">
+                                <li class="mb-2">
+                                    Open the activity and click the <strong>"Manage Questions"</strong> button on top.
+                                </li>
+                                <li class="mb-2">
+                                    Choose the batch size (<code>10</code>, <code>20</code>, or <code>30</code>) and click <strong>"Generate Questions"</strong>. The AI will generate multiple-choice questions with 4 options and educational explanations based on your configured scope.
+                                </li>
+                                <li class="mb-2">
+                                    <strong>Teacher Curation:</strong>
+                                    In the question table, review each question:
+                                    <ul class="mt-1">
+                                        <li><strong class="text-success"><i class="fa fa-check"></i> Approve:</strong> Activates the question for student match pools.</li>
+                                        <li><strong class="text-primary"><i class="fa fa-pencil"></i> Edit:</strong> Adjust the prompt, choices, correct index, and explanation in a popup modal.</li>
+                                        <li><strong class="text-danger"><i class="fa fa-trash"></i> Discard:</strong> Removes inadequate questions from the pool.</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                            <div class="alert alert-danger py-2 mb-0">
+                                <i class="fa fa-exclamation-triangle mr-1 me-1"></i> <strong>Safety Lock:</strong> Students cannot start battles until there are at least the <strong>minimum required approved questions</strong> in the pool (default: 5).
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4 -->
+                    <div class="card mb-4 border-0 shadow-sm" style="border-left: 5px solid #198754 !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-success mb-0">
+                                    <i class="fa fa-gamepad mr-2 me-2"></i> Step 4: Battle Dynamics (Student Experience)
+                                </h5>
+                                <span class="badge badge-success bg-success text-white px-2 py-1">Students &amp; Teachers</span>
+                            </div>
+                            <p>Students have three distinct game modes to challenge their knowledge:</p>
+                            <ul class="mb-3">
+                                <li class="mb-2">
+                                    <strong>1. Direct Challenge:</strong> Select an enrolled peer from the dropdown and click <em>"Challenge"</em>. The challenger plays their 5 questions immediately; the opponent receives a notification and has until the W.O. timeout to play.
+                                </li>
+                                <li class="mb-2">
+                                    <strong>2. Ranked Match (Matchmaking):</strong> Enter the match queue to play against the first available waiting peer.
+                                </li>
+                                <li class="mb-2">
+                                    <strong>3. Challenge AI Master:</strong> Instant single-player match against the AI bot—ideal for off-hours training.
+                                </li>
+                                <li>
+                                    <strong>Scoring &amp; Tie-Breaking:</strong> When both players finish, the winner is determined by accuracy. Ties are resolved by fastest average answer time!
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5 -->
+                    <div class="card mb-2 border-0 shadow-sm" style="border-left: 5px solid #6c757d !important;">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title font-weight-bold text-secondary mb-0">
+                                    <i class="fa fa-bar-chart mr-2 me-2"></i> Step 5: Teacher Analytics &amp; Reports
+                                </h5>
+                                <span class="badge badge-secondary bg-secondary text-white px-2 py-1">Teacher</span>
+                            </div>
+                            <p>Click the <strong>"Class Report"</strong> button on the main lobby to monitor class performance:</p>
+                            <ul class="mb-0">
+                                <li class="mb-1"><strong>Accuracy per Question:</strong> Pinpoint difficult concepts where students struggle the most to adapt your classes.</li>
+                                <li class="mb-1"><strong>Engagement Metrics:</strong> Total matches, win/loss distributions, and W.O. forfeit rates.</li>
+                                <li class="mb-1"><strong>Automatic Grading:</strong> Direct integration with the Moodle Gradebook based on your selected criteria (total points, wins, or participation).</li>
+                                <li><strong>Export:</strong> Download the complete dataset as a CSV spreadsheet at any time.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer bg-light border-top py-2 px-4 d-flex justify-content-between align-items-center">
+                <span class="text-muted small">
+                    <i class="fa fa-info-circle mr-1 me-1"></i> Batalha de Conhecimento • Knowledge Battle
+                </span>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" data-bs-dismiss="modal">
+                    {{#is_pt}}Fechar{{/is_pt}}{{^is_pt}}Close{{/is_pt}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#js}}
+require(['jquery'], function($) {
+    $(document).on('click', '.btn-kb-lang', function(e) {
+        e.preventDefault();
+        var lang = $(this).data('lang');
+        $('.btn-kb-lang').removeClass('btn-primary text-white active').addClass('btn-outline-secondary');
+        $(this).removeClass('btn-outline-secondary').addClass('btn-primary text-white active');
+
+        if (lang === 'pt') {
+            $('#kb-help-content-pt').show();
+            $('#kb-help-content-en').hide();
+            $('#modal-kb-help-title').text('Guia de Configuração e Uso Passo a Passo');
+            $('#modal-kb-help .modal-footer .btn-secondary').text('Fechar');
+        } else {
+            $('#kb-help-content-pt').hide();
+            $('#kb-help-content-en').show();
+            $('#modal-kb-help-title').text('Step-by-Step Setup & User Guide');
+            $('#modal-kb-help .modal-footer .btn-secondary').text('Close');
+        }
+    });
+});
+{{/js}}

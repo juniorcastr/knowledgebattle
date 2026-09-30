@@ -14,7 +14,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_knowledgebattle_mod_form extends moodleform_mod {
 
     public function definition() {
-        global $CFG;
+        global $CFG, $PAGE;
         $mform = $this->_form;
 
         // 1. General settings section (Name & Description).
@@ -46,6 +46,54 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
         $mform->addElement('textarea', 'topic_text', get_string('topic_text', 'mod_knowledgebattle'), 'wrap="virtual" rows="5" cols="50"');
         $mform->setType('topic_text', PARAM_TEXT);
         $mform->hideIf('topic_text', 'content_scope', 'noteq', 1);
+        $mform->disabledIf('topic_text', 'content_scope', 'noteq', 1);
+
+        // Client-side validation: ensure topic_text is mandatory when content_scope is 1 (Custom Topic).
+        if ($PAGE && !defined('CLI_SCRIPT')) {
+            $PAGE->requires->js_amd_inline("
+                require(['jquery', 'core/str'], function($, Str) {
+                    var form = document.querySelector('form.mform');
+                    if (!form) return;
+                    form.addEventListener('submit', function(e) {
+                        var scope = form.querySelector('[name=\"content_scope\"]');
+                        var topic = form.querySelector('[name=\"topic_text\"]');
+                        if (scope && topic && scope.value == '1') {
+                            if (!topic.value || topic.value.trim() === '') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                Str.get_string('required', 'moodle').then(function(s) {
+                                    var parent = $(topic).closest('.fitem');
+                                    parent.addClass('has-danger text-danger');
+                                    $(topic).addClass('is-invalid');
+                                    var errSpan = document.getElementById('id_error_topic_text');
+                                    if (!errSpan) {
+                                        errSpan = document.createElement('div');
+                                        errSpan.id = 'id_error_topic_text';
+                                        errSpan.className = 'form-control-feedback invalid-feedback';
+                                        topic.parentNode.appendChild(errSpan);
+                                    }
+                                    errSpan.innerText = s;
+                                    $(errSpan).show();
+                                    topic.focus();
+                                });
+                                return false;
+                            }
+                        }
+                    }, true);
+                    var topicEl = form.querySelector('[name=\"topic_text\"]');
+                    if (topicEl) {
+                        topicEl.addEventListener('input', function() {
+                            if (topicEl.value && topicEl.value.trim() !== '') {
+                                var parent = $(topicEl).closest('.fitem');
+                                parent.removeClass('has-danger text-danger');
+                                $(topicEl).removeClass('is-invalid');
+                                $('#id_error_topic_text').hide();
+                            }
+                        });
+                    }
+                });
+            ");
+        }
 
         $mform->addElement('hidden', 'supply_mode', 1);
         $mform->setType('supply_mode', PARAM_INT);
@@ -180,7 +228,7 @@ class mod_knowledgebattle_mod_form extends moodleform_mod {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if ($data['content_scope'] == 1 && empty($data['topic_text'])) {
+        if ((int)($data['content_scope'] ?? 1) === 1 && trim($data['topic_text'] ?? '') === '') {
             $errors['topic_text'] = get_string('required');
         }
 

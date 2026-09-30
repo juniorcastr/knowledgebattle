@@ -77,4 +77,13 @@ $functions = [
         'capabilities' => 'mod/knowledgebattle:managequestions',
         'services' => [],
     ],
+    'mod_knowledgebattle_test_ai_connection' => [
+        'classname' => 'mod_knowledgebattle\external\test_ai_connection',
+        'methodname' => 'execute',
+        'description' => 'Tests connection to the configured AI provider and model',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'moodle/site:config',
+        'services' => [],
+    ],
 ];
