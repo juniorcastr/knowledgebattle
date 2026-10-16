@@ -1,3 +1,22 @@
+<div class="mod-knowledgebattle" id="knowledgebattle-content" data-battleid="{{battleid}}" data-cmid="{{cmid}}">
+{{#show_toolbar}}
+<div class="mb-3 d-flex flex-wrap align-items-center">
+    {{#has_manage}}
+    <a href="{{questions_url}}" class="btn btn-outline-secondary mr-2 me-2 mb-2">
+        <i class="fa fa-question-circle mr-1 me-1" aria-hidden="true"></i> {{#str}}manage_questions_tab, mod_knowledgebattle{{/str}}
+    </a>
+    {{/has_manage}}
+    {{#has_report}}
+    <a href="{{report_url}}" class="btn btn-outline-info mr-2 me-2 mb-2">
+        <i class="fa fa-bar-chart mr-1 me-1" aria-hidden="true"></i> {{#str}}report_tab, mod_knowledgebattle{{/str}}
+    </a>
+    {{/has_report}}
+    <button type="button" class="btn btn-outline-primary mb-2" id="btn-kb-help-guide" data-toggle="modal" data-bs-toggle="modal" data-target="#modal-kb-help" data-bs-target="#modal-kb-help">
+        <i class="fa fa-life-ring mr-1 me-1" aria-hidden="true"></i> {{#str}}help_guide_btn, mod_knowledgebattle{{/str}}
+    </button>
+</div>
+{{> mod_knowledgebattle/help_modal }}
+{{/show_toolbar}}
 <div class="knowledgebattle-lobby" data-battleid="{{battleid}}" data-cmid="{{cmid}}">
     <input type="hidden" id="kb-battleid" value="{{battleid}}">
     <input type="hidden" id="kb-cmid" value="{{cmid}}">
@@ -7,9 +26,9 @@
             <i class="fa fa-exclamation-triangle fa-2x text-warning"></i>
         </div>
         <div>
-            <strong>Atenção:</strong> Esta batalha necessita de pelo menos <strong>{{min_questions}}</strong> questões aprovadas para iniciar partidas (atualmente existem <strong>{{approved_count}}</strong> aprovadas).
+            {{#str}}tpl_lobby_min_questions_warning, mod_knowledgebattle, {"min":"{{min_questions}}","count":"{{approved_count}}"}{{/str}}
             {{#has_manage}}
-                <br>Acesse a aba <a href="questions.php?id={{cmid}}" class="alert-link font-weight-bold">Gerenciar Questões</a> para gerar questões com IA ou cadastrá-las.
+                <br>{{#str}}tpl_lobby_manage_hint, mod_knowledgebattle, {"url":"questions.php?id={{cmid}}"}{{/str}}
             {{/has_manage}}
         </div>
     </div>
@@ -23,7 +42,7 @@
                     <strong class="h4">{{user_stats.current_points}}</strong>
                 </div>
                 <div class="stats-item text-center">
-                    <span class="d-block text-muted">Vitórias</span>
+                    <span class="d-block text-muted">{{#str}}tpl_wins, mod_knowledgebattle{{/str}}</span>
                     <strong class="h4 text-success">{{user_stats.wins}}</strong>
                 </div>
                 <div class="stats-item text-center">
@@ -31,7 +50,7 @@
                     <strong class="h4 text-warning">{{user_stats.current_streak}} 🔥</strong>
                 </div>
                 <div class="stats-item text-center">
-                    <span class="d-block text-muted">Posição</span>
+                    <span class="d-block text-muted">{{#str}}tpl_rank_position, mod_knowledgebattle{{/str}}</span>
                     <strong class="h4">#{{user_rank}}</strong>
                 </div>
             </div>
@@ -51,8 +70,8 @@
                     <div class="d-flex align-items-center">
                         {{{challenger_avatar}}}
                         <div class="ml-3">
-                            <span class="h6 mb-1 d-block"><strong>{{challenger_name}}</strong> te desafiou para um duelo!</span>
-                            <small class="text-muted"><i class="fa fa-clock-o"></i> Expira em aprox. {{hours_left}}h • {{questions_count}} questões</small>
+                            <span class="h6 mb-1 d-block">{{#str}}tpl_challenged_you, mod_knowledgebattle, {{challenger_name}}{{/str}}</span>
+                            <small class="text-muted"><i class="fa fa-clock-o"></i> {{#str}}tpl_expires_in, mod_knowledgebattle, {"hours":"{{hours_left}}","count":"{{questions_count}}"}{{/str}}</small>
                         </div>
                     </div>
                     <button class="btn btn-success font-weight-bold btn-accept-challenge" data-matchid="{{id}}">
@@ -76,9 +95,9 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center py-2">
                     <div>
                         <strong class="text-dark">{{description}}</strong>
-                        <div class="small text-muted">Seu placar: {{p1_score}} acertos • Prazo restante: {{hours_left}}h</div>
+                        <div class="small text-muted">{{#str}}tpl_your_score, mod_knowledgebattle, {"score":"{{p1_score}}","hours":"{{hours_left}}"}{{/str}}</div>
                     </div>
-                    <span class="badge badge-info py-2 px-3"><i class="fa fa-spinner fa-spin mr-1"></i> Aguardando oponente</span>
+                    <span class="badge badge-info py-2 px-3"><i class="fa fa-spinner fa-spin mr-1"></i> {{#str}}status_waiting, mod_knowledgebattle{{/str}}</span>
                 </li>
                 {{/waiting_matches}}
             </ul>
@@ -90,10 +109,10 @@
         <div class="col-md-4 mb-3">
             <div class="card h-100 text-center shadow-sm">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title font-weight-bold text-primary"><i class="fa fa-user mr-1"></i> Desafio Direto</h5>
-                    <p class="card-text text-muted small">Escolha um colega específico para duelar de forma assíncrona.</p>
+                    <h5 class="card-title font-weight-bold text-primary"><i class="fa fa-user mr-1"></i> {{#str}}match_direct, mod_knowledgebattle{{/str}}</h5>
+                    <p class="card-text text-muted small">{{#str}}tpl_direct_desc, mod_knowledgebattle{{/str}}</p>
                     <select id="direct-opponent" class="form-control mb-3" {{^has_enough_questions}}disabled{{/has_enough_questions}}>
-                        <option value="">Selecione um oponente...</option>
+                        <option value="">{{#str}}tpl_select_opponent, mod_knowledgebattle{{/str}}</option>
                         {{#enrolled_users}}
                             <option value="{{id}}">{{fullname}}</option>
                         {{/enrolled_users}}
@@ -108,9 +127,9 @@
         <div class="col-md-4 mb-3">
             <div class="card h-100 text-center bg-primary text-white shadow-sm">
                 <div class="card-body d-flex flex-column justify-content-center">
-                    <h5 class="card-title font-weight-bold"><i class="fa fa-random mr-1"></i> Batalha Rápida</h5>
-                    <p class="card-text small text-white-50">Encontre automaticamente um oponente do seu nível no Matchmaking.</p>
-                    <button class="btn btn-light w-100 mt-auto font-weight-bold text-primary" id="btn-quick-match" {{^has_enough_questions}}disabled title="Aguardando questões aprovadas"{{/has_enough_questions}}>
+                    <h5 class="card-title font-weight-bold"><i class="fa fa-random mr-1"></i> {{#str}}tpl_quick_battle, mod_knowledgebattle{{/str}}</h5>
+                    <p class="card-text small text-white-50">{{#str}}tpl_quick_desc, mod_knowledgebattle{{/str}}</p>
+                    <button class="btn btn-light w-100 mt-auto font-weight-bold text-primary" id="btn-quick-match" {{^has_enough_questions}}disabled title="{{#str}}tpl_waiting_approved_questions, mod_knowledgebattle{{/str}}"{{/has_enough_questions}}>
                         <i class="fa fa-flash mr-1"></i> {{#str}}quick_match, knowledgebattle{{/str}}
                     </button>
                 </div>
@@ -121,9 +140,9 @@
         <div class="col-md-4 mb-3">
             <div class="card h-100 text-center bg-dark text-white shadow-sm">
                 <div class="card-body d-flex flex-column justify-content-center">
-                    <h5 class="card-title font-weight-bold"><i class="fa fa-android mr-1"></i> Mestre IA</h5>
-                    <p class="card-text small text-white-50">Pratique agora mesmo contra o tutor virtual e receba feedback instantâneo.</p>
-                    <button class="btn btn-outline-light w-100 mt-auto font-weight-bold" id="btn-challenge-bot" {{^has_enough_questions}}disabled title="Aguardando questões aprovadas"{{/has_enough_questions}}>
+                    <h5 class="card-title font-weight-bold"><i class="fa fa-android mr-1"></i> {{#str}}bot_name, mod_knowledgebattle{{/str}}</h5>
+                    <p class="card-text small text-white-50">{{#str}}tpl_bot_desc, mod_knowledgebattle{{/str}}</p>
+                    <button class="btn btn-outline-light w-100 mt-auto font-weight-bold" id="btn-challenge-bot" {{^has_enough_questions}}disabled title="{{#str}}tpl_waiting_approved_questions, mod_knowledgebattle{{/str}}"{{/has_enough_questions}}>
                         <i class="fa fa-gamepad mr-1"></i> {{#str}}challenge_bot, knowledgebattle{{/str}}
                     </button>
                 </div>
@@ -143,7 +162,7 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center py-2">
                     <div>
                         <span class="badge {{badge_class}} mr-2 px-2 py-1">{{result_label}}</span>
-                        vs <strong>{{opponent_name}}</strong> ({{score_text}})
+                        {{#str}}tpl_vs, mod_knowledgebattle{{/str}} <strong>{{opponent_name}}</strong> ({{score_text}})
                         <span class="small text-muted ml-2">• {{date}}</span>
                     </div>
                     <button class="btn btn-sm btn-outline-primary btn-view-result" data-matchid="{{id}}">
@@ -163,4 +182,5 @@
             </button>
         </div>
     </div>
+</div>
 </div>

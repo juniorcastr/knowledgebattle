@@ -1,10 +1,25 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Web services definition.
  *
  * @package    mod_knowledgebattle
- * @copyright  2024
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -25,6 +40,7 @@ $functions = [
         'description' => 'Gets the next question for a battle',
         'type' => 'read',
         'ajax' => true,
+        'capabilities' => 'mod/knowledgebattle:view',
         'services' => [],
     ],
     'mod_knowledgebattle_submit_answer' => [
@@ -33,6 +49,7 @@ $functions = [
         'description' => 'Submits an answer for the current question',
         'type' => 'write',
         'ajax' => true,
+        'capabilities' => 'mod/knowledgebattle:view',
         'services' => [],
     ],
     'mod_knowledgebattle_get_battle_result' => [
@@ -41,6 +58,7 @@ $functions = [
         'description' => 'Gets the final result of a completed battle',
         'type' => 'read',
         'ajax' => true,
+        'capabilities' => 'mod/knowledgebattle:view',
         'services' => [],
     ],
     'mod_knowledgebattle_get_leaderboard' => [
@@ -49,6 +67,7 @@ $functions = [
         'description' => 'Gets the leaderboard for a knowledgebattle instance',
         'type' => 'read',
         'ajax' => true,
+        'capabilities' => 'mod/knowledgebattle:view',
         'services' => [],
     ],
     'mod_knowledgebattle_get_user_stats' => [
@@ -57,6 +76,7 @@ $functions = [
         'description' => 'Gets the statistics for the current user',
         'type' => 'read',
         'ajax' => true,
+        'capabilities' => 'mod/knowledgebattle:view',
         'services' => [],
     ],
     'mod_knowledgebattle_generate_questions' => [

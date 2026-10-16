@@ -1,23 +1,35 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * External API service to test AI provider and model connection.
  *
  * @package    mod_knowledgebattle
  * @copyright  2024 Junio / Knowledge Battle
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_knowledgebattle\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
-
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use mod_knowledgebattle\ai\provider_factory;
 
 class test_ai_connection extends external_api {
@@ -30,9 +42,9 @@ class test_ai_connection extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'provider' => new external_value(PARAM_ALPHANUMEXT, 'Provider name', VALUE_DEFAULT, ''),
-            'model' => new external_value(PARAM_RAW, 'Model name', VALUE_DEFAULT, ''),
+            'model' => new external_value(PARAM_TEXT, 'Model name', VALUE_DEFAULT, ''),
             'apikey' => new external_value(PARAM_RAW, 'API Key', VALUE_DEFAULT, ''),
-            'baseurl' => new external_value(PARAM_RAW, 'Base URL', VALUE_DEFAULT, ''),
+            'baseurl' => new external_value(PARAM_URL, 'Base URL', VALUE_DEFAULT, ''),
         ]);
     }
 
@@ -63,6 +75,9 @@ class test_ai_connection extends external_api {
         require_capability('moodle/site:config', $context);
 
         $providername = trim($params['provider']);
+        if ($params['baseurl'] !== '' && !preg_match('#^https?://#i', $params['baseurl'])) {
+            throw new \invalid_parameter_exception('baseurl must be an http or https URL');
+        }
         $modelname = trim($params['model']);
         $key = trim($params['apikey']);
         $url = trim($params['baseurl']);
@@ -109,7 +124,7 @@ class test_ai_connection extends external_api {
                 'model' => $modelname,
                 'http_code' => 0,
                 'reply' => '',
-                'error' => $e->getMessage(),
+                'error' => get_string('test_ai_connection_failed', 'mod_knowledgebattle'),
             ];
         }
     }

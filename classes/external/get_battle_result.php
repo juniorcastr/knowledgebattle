@@ -1,10 +1,25 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * External function get_battle_result.
  *
  * @package    mod_knowledgebattle
- * @copyright  2024
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_knowledgebattle\external;
@@ -38,6 +53,13 @@ class get_battle_result extends external_api {
         $cm = get_coursemodule_from_instance('knowledgebattle', $battle->id, 0, false, MUST_EXIST);
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
+        require_capability('mod/knowledgebattle:view', $context);
+
+        // Only the players of the match (or users able to view all stats) may read it.
+        $isplayer = ($USER->id == $match->player1_id) || (!empty($match->player2_id) && $USER->id == $match->player2_id);
+        if (!$isplayer) {
+            require_capability('mod/knowledgebattle:viewallstats', $context);
+        }
 
         // Player names.
         $p1 = \core_user::get_user($match->player1_id);
@@ -98,8 +120,9 @@ class get_battle_result extends external_api {
         foreach ($questions_records as $q) {
             $options = json_decode($q->options_json, true) ?: [];
             $turn = $user_turns[$q->id] ?? null;
-            $user_answer = 'Sem resposta';
-            $correct_answer = $options[$q->correct_index] ?? '';
+            $user_answer = get_string('no_answer', 'mod_knowledgebattle');
+            // Reveal correct answers and explanations only once the match is complete.
+            $correct_answer = $is_completed ? ($options[$q->correct_index] ?? '') : '';
             $is_turn_correct = false;
 
             if ($turn) {
@@ -107,14 +130,14 @@ class get_battle_result extends external_api {
                 if ($turn->selected_option >= 0 && isset($options[$turn->selected_option])) {
                     $user_answer = $options[$turn->selected_option];
                 } else if ($turn->selected_option == -1) {
-                    $user_answer = 'Tempo esgotado';
+                    $user_answer = get_string('time_expired', 'mod_knowledgebattle');
                 }
             }
 
             $questions_list[] = [
                 'num' => $num++,
                 'question_text' => $q->question_text,
-                'explanation' => $q->explanation ?? '',
+                'explanation' => $is_completed ? ($q->explanation ?? '') : '',
                 'correct' => (bool)$is_turn_correct,
                 'user_answer' => (string)$user_answer,
                 'correct_answer' => (string)$correct_answer

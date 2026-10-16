@@ -17,12 +17,12 @@ find "${SCRIPT_DIR}" -name "*.php" -not -path "*/knowledgebattle-docs/*" -exec p
 echo "  -> All PHP files passed syntax check."
 
 # Step 2: AMD build verification
-echo "[2/4] Verifying AMD minified assets..."
-if [ ! -f "${SCRIPT_DIR}/amd/build/battle.min.js" ] || [ ! -f "${SCRIPT_DIR}/amd/build/question_manager.min.js" ]; then
-    echo "  -> Building missing AMD minified files using terser..."
-    npx --yes terser "${SCRIPT_DIR}/amd/src/battle.js" -c -m --source-map "url=battle.min.js.map" -o "${SCRIPT_DIR}/amd/build/battle.min.js"
-    npx --yes terser "${SCRIPT_DIR}/amd/src/question_manager.js" -c -m --source-map "url=question_manager.min.js.map" -o "${SCRIPT_DIR}/amd/build/question_manager.min.js"
-fi
+echo "[2/4] Building AMD minified assets..."
+mkdir -p "${SCRIPT_DIR}/amd/build"
+for src in "${SCRIPT_DIR}"/amd/src/*.js; do
+    base="$(basename "${src}" .js)"
+    npx --yes terser "${src}" -c -m --source-map "url=${base}.min.js.map" -o "${SCRIPT_DIR}/amd/build/${base}.min.js"
+done
 echo "  -> AMD build assets verified."
 
 # Step 3: Clean copy into standard Moodle root directory
@@ -34,6 +34,8 @@ mkdir -p "${TARGET_DIR}"
 if command -v rsync > /dev/null 2>&1; then
     rsync -a \
         --exclude=".git" \
+        --exclude=".github" \
+        --exclude=".scratch" \
         --exclude=".gitignore" \
         --exclude=".gitattributes" \
         --exclude="knowledgebattle-docs" \
@@ -49,6 +51,8 @@ if command -v rsync > /dev/null 2>&1; then
 else
     cp -R "${SCRIPT_DIR}/." "${TARGET_DIR}/"
     rm -rf "${TARGET_DIR}/.git" \
+           "${TARGET_DIR}/.github" \
+           "${TARGET_DIR}/.scratch" \
            "${TARGET_DIR}/.gitignore" \
            "${TARGET_DIR}/.gitattributes" \
            "${TARGET_DIR}/knowledgebattle-docs" \

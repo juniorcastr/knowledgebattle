@@ -1,3 +1,25 @@
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * AMD module battle for mod_knowledgebattle.
+ *
+ * @module     mod_knowledgebattle/battle
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'], function($, Ajax, Notification, Str, Templates) {
     var timerInterval = null;
 
@@ -13,6 +35,38 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
         lastMatchStatus: 1,
         lastMatchType: 1,
         lastOpponentId: null,
+        strings: {},
+
+        /**
+         * Keys of the strings (component mod_knowledgebattle) preloaded on init.
+         */
+        stringKeys: [
+            'code_js_error', 'code_js_battleid_missing', 'code_js_reload', 'code_js_opponent_ai',
+            'code_js_opponent', 'code_js_correct', 'code_js_incorrect', 'code_js_view_result',
+            'code_js_next_question', 'code_js_your_colleague', 'str_you_won', 'str_you_lost',
+            'str_draw', 'code_js_points_earned'
+        ],
+
+        loadStrings: function() {
+            var self = this;
+            var requests = self.stringKeys.map(function(key) {
+                var req = {key: key, component: 'mod_knowledgebattle'};
+                if (key === 'code_js_points_earned') {
+                    req.param = '{POINTS}';
+                }
+                return req;
+            });
+            return Str.get_strings(requests).then(function(results) {
+                self.stringKeys.forEach(function(key, i) {
+                    self.strings[key] = results[i];
+                });
+                return true;
+            });
+        },
+
+        str: function(key) {
+            return this.strings[key] !== undefined ? this.strings[key] : key;
+        },
 
         getBattleId: function() {
             var id = (this.params && this.params.battleid) ? this.params.battleid : null;
@@ -44,14 +98,18 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                 this.params.battleid = this.getBattleId();
             }
 
+            var self = this;
             this.timeLimit = this.params.timePerQuestion || 30;
             this.bindEvents();
 
-            if (this.params.activeMatchId && this.params.activeMatchId > 0) {
-                this.currentMatchId = this.params.activeMatchId;
-                this.currentQuestionNumber = 1;
-                this.loadQuestion();
-            }
+            this.loadStrings().then(function() {
+                if (self.params.activeMatchId && self.params.activeMatchId > 0) {
+                    self.currentMatchId = self.params.activeMatchId;
+                    self.currentQuestionNumber = 1;
+                    self.loadQuestion();
+                }
+                return true;
+            }).catch(Notification.exception);
         },
 
         bindEvents: function() {
@@ -134,7 +192,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
             var self = this;
             var battleId = self.getBattleId();
             if (!battleId) {
-                Notification.alert('Erro', 'Identificador da batalha não encontrado. Por favor, recarregue a página.', 'Recarregar', function() {
+                Notification.alert(self.str('code_js_error'), self.str('code_js_battleid_missing'), self.str('code_js_reload'), function() {
                     window.location.reload();
                 });
                 return;
@@ -199,7 +257,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                     current_question: response.question_number,
                     total_questions: response.total_questions,
                     time_limit: response.time_limit,
-                    opponent_name: (self.lastMatchType === 3) ? 'Mestre IA' : 'Oponente',
+                    opponent_name: (self.lastMatchType === 3) ? self.str('code_js_opponent_ai') : self.str('code_js_opponent'),
                     question: {
                         id: response.questionid,
                         text: response.question_text,
@@ -270,7 +328,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                         $btnElement.removeClass('btn-outline-primary').addClass('btn-success text-white');
                     }
                     $('#feedback-container').addClass('alert alert-success');
-                    $('#feedback-title').html('<i class="fa fa-check"></i> Correto!');
+                    $('#feedback-title').html('<i class="fa fa-check"></i> ' + self.str('code_js_correct'));
                 } else {
                     if ($btnElement) {
                         $btnElement.removeClass('btn-outline-primary').addClass('btn-danger text-white');
@@ -281,7 +339,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                         .addClass('btn-success text-white');
 
                     $('#feedback-container').addClass('alert alert-danger');
-                    $('#feedback-title').html('<i class="fa fa-times"></i> Incorreto!');
+                    $('#feedback-title').html('<i class="fa fa-times"></i> ' + self.str('code_js_incorrect'));
                 }
 
                 $('#feedback-explanation').text(response.explanation);
@@ -290,9 +348,9 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                 $('#battle-progress').css('width', pct + '%');
 
                 if (response.is_last_question) {
-                    $('#btn-next-question').html('Ver Resultado <i class="fa fa-flag-checkered"></i>').removeClass('d-none');
+                    $('#btn-next-question').html(self.str('code_js_view_result') + ' <i class="fa fa-flag-checkered"></i>').removeClass('d-none');
                 } else {
-                    $('#btn-next-question').html('Próxima Questão <i class="fa fa-arrow-right"></i>').removeClass('d-none');
+                    $('#btn-next-question').html(self.str('code_js_next_question') + ' <i class="fa fa-arrow-right"></i>').removeClass('d-none');
                 }
             }).fail(Notification.exception);
         },
@@ -302,7 +360,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
             if (status === 2) {
                 // Waiting for opponent in direct invite or pool
                 var waitingContext = {
-                    opponent_name: (self.lastMatchType === 1 && self.lastOpponentId) ? 'seu colega' : null
+                    opponent_name: (self.lastMatchType === 1 && self.lastOpponentId) ? self.str('code_js_your_colleague') : null
                 };
                 Templates.render('mod_knowledgebattle/waiting_opponent', waitingContext).then(function(html, js) {
                     $('#knowledgebattle-content').html(html);
@@ -363,10 +421,10 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
                     is_win: data.user_is_winner,
                     is_loss: (!data.user_is_winner && !data.is_draw),
                     is_draw: data.is_draw,
-                    str_you_won: 'VITÓRIA!',
-                    str_you_lost: 'DERROTA!',
-                    str_draw: 'EMPATE!',
-                    points_earned: (data.points_earned >= 0 ? '+' : '') + data.points_earned + ' pontos',
+                    str_you_won: self.str('str_you_won'),
+                    str_you_lost: self.str('str_you_lost'),
+                    str_draw: self.str('str_draw'),
+                    points_earned: self.str('code_js_points_earned').replace('{POINTS}', (data.points_earned >= 0 ? '+' : '') + data.points_earned),
                     user_score: uScore,
                     opp_score: oScore,
                     user_time: uTime,
@@ -400,7 +458,7 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str', 'core/templates'
             var self = this;
             var battleId = self.getBattleId();
             if (!battleId) {
-                Notification.alert('Erro', 'Identificador da batalha não encontrado. Por favor, recarregue a página.', 'Recarregar', function() {
+                Notification.alert(self.str('code_js_error'), self.str('code_js_battleid_missing'), self.str('code_js_reload'), function() {
                     window.location.reload();
                 });
                 return;

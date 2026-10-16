@@ -1,6 +1,55 @@
-define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notification) {
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+/**
+ * AMD module question_manager for mod_knowledgebattle.
+ *
+ * @module     mod_knowledgebattle/question_manager
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Ajax, Notification, Str) {
     return {
         params: {},
+        strings: {},
+
+        stringKeys: [
+            'code_js_generating_ai', 'code_js_error', 'code_js_battleid_missing', 'code_js_reload',
+            'code_js_generate_questions', 'code_js_questions_generated', 'code_js_question_updated'
+        ],
+
+        loadStrings: function() {
+            var self = this;
+            var requests = self.stringKeys.map(function(key) {
+                var req = {key: key, component: 'mod_knowledgebattle'};
+                if (key === 'code_js_questions_generated') {
+                    req.param = '{COUNT}';
+                }
+                return req;
+            });
+            return Str.get_strings(requests).then(function(results) {
+                self.stringKeys.forEach(function(key, i) {
+                    self.strings[key] = results[i];
+                });
+                return true;
+            });
+        },
+
+        str: function(key) {
+            return this.strings[key] !== undefined ? this.strings[key] : key;
+        },
 
         getBattleId: function() {
             var id = (this.params && this.params.battleid) ? this.params.battleid : null;
@@ -28,6 +77,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 this.params.battleid = this.getBattleId();
             }
 
+            this.loadStrings().catch(Notification.exception);
             this.bindEvents();
         },
 
@@ -36,14 +86,14 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
 
             $(document).on('click', '#btn-generate-questions', function() {
                 var $btn = $(this);
-                $btn.attr('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Gerando com IA...');
+                $btn.attr('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ' + self.str('code_js_generating_ai'));
 
                 var battleId = self.getBattleId();
                 if (!battleId) {
-                    Notification.alert('Erro', 'Identificador da batalha não encontrado. Por favor, recarregue a página.', 'Recarregar', function() {
+                    Notification.alert(self.str('code_js_error'), self.str('code_js_battleid_missing'), self.str('code_js_reload'), function() {
                         window.location.reload();
                     });
-                    $btn.attr('disabled', false).html('<i class="fa fa-magic"></i> Gerar Questões');
+                    $btn.attr('disabled', false).html('<i class="fa fa-magic"></i> ' + self.str('code_js_generate_questions'));
                     return;
                 }
 
@@ -60,13 +110,13 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                     }
                 }])[0].then(function(response) {
                     Notification.addNotification({
-                        message: response.generated_count + ' questões geradas com sucesso!',
+                        message: self.str('code_js_questions_generated').replace('{COUNT}', response.generated_count),
                         type: 'success'
                     });
                     window.location.reload();
                 }).fail(function(ex) {
                     Notification.exception(ex);
-                    $btn.attr('disabled', false).html('<i class="fa fa-magic"></i> Gerar Questões');
+                    $btn.attr('disabled', false).html('<i class="fa fa-magic"></i> ' + self.str('code_js_generate_questions'));
                 });
             });
 
@@ -130,6 +180,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
         },
 
         manageQuestion: function(questionid, action, fields) {
+            var self = this;
             var args = {
                 questionid: parseInt(questionid, 10),
                 action: action
@@ -147,7 +198,7 @@ define(['jquery', 'core/ajax', 'core/notification'], function($, Ajax, Notificat
                 args: args
             }])[0].then(function(response) {
                 Notification.addNotification({
-                    message: 'Questão atualizada com sucesso!',
+                    message: self.str('code_js_question_updated'),
                     type: 'success'
                 });
                 window.location.reload();

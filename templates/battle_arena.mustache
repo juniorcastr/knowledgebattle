@@ -1,13 +1,13 @@
 <div class="knowledgebattle-arena">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0">Questão <span id="current-question-num">{{current_question}}</span> de {{total_questions}}</h4>
+        <h4 class="m-0">{{#str}}tpl_question_x_of_y, mod_knowledgebattle, {"current":"{{current_question}}","total":"{{total_questions}}"}{{/str}}</h4>
         <div class="timer-badge bg-primary text-white px-3 py-1 rounded-pill h5 m-0">
             <i class="fa fa-clock-o"></i> <span id="time-left">{{time_limit}}</span>s
         </div>
     </div>
 
     <div class="match-info text-center mb-4 text-muted">
-        <strong>Você</strong> vs <strong>{{opponent_name}}</strong>
+        <strong>{{#str}}tpl_you, mod_knowledgebattle{{/str}}</strong> {{#str}}tpl_vs, mod_knowledgebattle{{/str}} <strong>{{opponent_name}}</strong>
     </div>
 
     <div class="progress mb-4" style="height: 10px;">
@@ -35,6 +35,6 @@
     </div>
 
     <div class="text-center">
-        <button id="btn-next-question" class="btn btn-primary btn-lg d-none px-5">Próxima Questão <i class="fa fa-arrow-right"></i></button>
+        <button id="btn-next-question" class="btn btn-primary btn-lg d-none px-5">{{#str}}tpl_next_question, mod_knowledgebattle{{/str}} <i class="fa fa-arrow-right"></i></button>
     </div>
 </div>

@@ -1,214 +1,358 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
- * Brazilian Portuguese language strings for Battle Quiz.
+ * Brazilian Portuguese language strings for mod_knowledgebattle.
  *
  * @package    mod_knowledgebattle
- * @copyright  2024
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Batalha de Conhecimento';
-$string['modulename'] = 'Batalha de Conhecimento';
-$string['modulenameplural'] = 'Batalhas de Conhecimento';
-$string['pluginadministration'] = 'Administração da Batalha de Conhecimento';
-
-// Capabilities
-$string['knowledgebattle:addinstance'] = 'Adicionar nova Batalha de Conhecimento';
-$string['knowledgebattle:view'] = 'Ver Batalha de Conhecimento';
-$string['knowledgebattle:managequestions'] = 'Gerenciar questões';
-$string['knowledgebattle:viewallstats'] = 'Ver todas as estatísticas';
-$string['knowledgebattle:challengebot'] = 'Desafiar Mestre IA';
-$string['knowledgebattle:generatequestions'] = 'Gerar questões com IA';
-
-// Form sections and headers
+$string['accept_and_play'] = 'Aceitar e Jogar';
 $string['ai_config'] = 'Configuração da Inteligência Artificial';
-$string['content_config'] = 'Configuração do Conteúdo';
-$string['battle_rules'] = 'Regras da Batalha';
-$string['points_config'] = 'Configuração de Pontuação';
-$string['limits_config'] = 'Limites & Oponentes';
-$string['display_config'] = 'Exibição & Critérios de Avaliação';
-
-// Form fields and settings
-$string['ai_provider'] = 'Provedor de IA';
 $string['ai_model'] = 'Modelo de IA';
-$string['content_scope'] = 'Escopo de Conteúdo';
-$string['topic_text'] = 'Tópico / Texto';
-$string['supply_mode'] = 'Modo de Fornecimento';
-$string['pool_size'] = 'Tamanho do Banco';
-$string['questions_per_match'] = 'Questões por Partida';
-$string['time_per_question'] = 'Tempo por Questão (segundos)';
-$string['wo_timeout_hours'] = 'Tempo Limite para W.O. (horas)';
-$string['hours'] = 'horas';
-$string['win_points'] = 'Pontos por Vitória';
-$string['draw_points'] = 'Pontos por Empate';
-$string['loss_points'] = 'Pontos por Derrota';
+$string['ai_model_default'] = 'Modelo de IA Padrão';
+$string['ai_provider'] = 'Provedor de IA';
+$string['ai_provider_desc'] = 'Selecione o provedor de IA utilizado para gerar questões.';
 $string['allow_negative_points'] = 'Permitir Pontos Negativos';
-$string['max_daily_battles'] = 'Máximo de Batalhas Diárias';
-$string['bot_enabled'] = 'Habilitar Bot IA';
-$string['ranking_visibility'] = 'Visibilidade do Ranking';
-$string['grade_criteria'] = 'Critério de Avaliação';
-$string['mustbepositive'] = 'O valor deve ser um número positivo maior que zero.';
-$string['player'] = 'Jogador';
-
-// Content scope options
-$string['scope_topic'] = 'Tópico Personalizado';
-$string['scope_section'] = 'Seção do Curso';
-$string['scope_resource'] = 'Recurso Específico';
-$string['scope_bank'] = 'Banco de Questões';
-$string['scope_questionbank'] = 'Banco de Questões';
-
-// Supply mode options
-$string['mode_pool'] = 'Pool Pré-gerado';
-$string['mode_ondemand'] = 'Geração Sob Demanda';
-$string['supply_pool'] = 'Baseado em Pool/Banco';
-$string['supply_ondemand'] = 'Geração Sob Demanda';
-
-// Ranking visibility options
-$string['ranking_all'] = 'Todos os Usuários';
-$string['ranking_top10'] = 'Apenas Top 10';
-$string['ranking_teacher'] = 'Apenas Professores';
-$string['ranking_teacheronly'] = 'Apenas Professores';
-
-// Grade criteria options
-$string['crit_points'] = 'Pontuação no Ranking';
-$string['crit_wins'] = 'Número de Vitórias';
-$string['crit_participation'] = 'Participação (Partidas Jogadas)';
-$string['criteria_points'] = 'Pontos Totais';
-$string['criteria_wins'] = 'Número de Vitórias';
-$string['criteria_participation'] = 'Participação (Partidas Jogadas)';
-
-// Completion rules
-$string['completionbattlesgroup'] = 'Batalhas disputadas';
-$string['completionwinsgroup'] = 'Vitórias obtidas';
-
-// Match types
-$string['match_direct'] = 'Desafio Direto';
-$string['match_matchmaking'] = 'Partida Ranqueada';
-$string['match_bot'] = 'Batalha contra Bot';
-
-// Match statuses
-$string['status_pending'] = 'Pendente';
-$string['status_waiting'] = 'Aguardando Oponente';
-$string['status_completed'] = 'Concluída';
-$string['status_wo'] = 'W.O.';
-$string['status_cancelled'] = 'Cancelada';
-
-// Battle UI
-$string['start_battle'] = 'Iniciar Batalha';
-$string['challenge_player'] = 'Desafiar';
-$string['quick_match'] = 'Batalha Rápida';
-$string['challenge_bot'] = 'Desafiar Mestre IA';
-$string['waiting_opponent'] = 'Aguardando Oponente...';
-$string['battle_result'] = 'Resultado da Batalha';
-$string['you_won'] = 'Você Venceu!';
-$string['you_lost'] = 'Você Perdeu!';
-$string['draw'] = 'Empate!';
-$string['wo_win'] = 'Vitória por W.O.!';
-$string['view_leaderboard'] = 'Ver Ranking';
-$string['request_rematch'] = 'Solicitar Revanche';
-
-// Events
-$string['event_battle_started'] = 'Batalha iniciada';
-$string['event_battle_completed'] = 'Batalha concluída';
-$string['event_challenge_sent'] = 'Desafio enviado';
-$string['event_answer_submitted'] = 'Resposta enviada';
-$string['event_battle_expired'] = 'Batalha expirada (W.O.)';
-$string['event_questions_generated'] = 'Questões geradas';
-$string['event_question_approved'] = 'Questão aprovada';
-
-// Errors
-$string['error_no_questions'] = 'Não há questões disponíveis para esta batalha.';
-$string['error_daily_limit'] = 'Você atingiu o limite máximo de batalhas diárias.';
-$string['error_ai_failed'] = 'A geração por IA falhou. Tente novamente mais tarde.';
-$string['error_invalid_answer'] = 'Resposta enviada inválida.';
-$string['error_battle_expired'] = 'Esta batalha expirou.';
-$string['error_no_opponent'] = 'Nenhum oponente adequado encontrado no momento.';
-
-// Misc
-$string['manage_questions_tab'] = 'Gerenciar Questões';
-$string['question_pool'] = 'Pool/Banco de Questões';
-$string['generate_questions_btn'] = 'Gerar Questões';
-$string['approve'] = 'Aprovar';
-$string['discard'] = 'Descartar';
-$string['edit_question'] = 'Editar Questão';
-$string['question_count'] = 'Contagem de Questões: {$a}';
-$string['leaderboard'] = 'Classificação';
-$string['my_stats'] = 'Minhas Estatísticas';
-$string['streak_label'] = 'Ofensiva';
-$string['points_label'] = 'Pontos';
-$string['task_check_expired'] = 'Verificar partidas expiradas da Batalha de Conhecimento';
-
-$string['dailylimitreached'] = 'Você atingiu o limite máximo de batalhas diárias.';
-$string['notenoughquestions'] = 'Não há questões suficientes para iniciar a batalha.';
-$string['notyourmatch'] = 'Você não é um participante desta partida.';
-$string['botdisabled'] = 'Batalhas contra a IA estão desativadas nesta atividade.';
 $string['alreadyanswered'] = 'Você já respondeu a esta questão.';
-$string['str_you_won'] = 'Você Venceu!';
-$string['str_you_lost'] = 'Você Perdeu!';
-$string['str_draw'] = 'Empate!';
-$string['report_title'] = 'Relatório Analítico & Desempenho';
-$string['report_tab'] = 'Relatório da Turma';
+$string['antiflood_limit'] = 'Limite Anti-Flood (chamadas/hora)';
+$string['antiflood_limit_desc'] = 'Número máximo de solicitações de geração de questões por IA que cada usuário pode fazer por hora.';
+$string['api_error'] = 'O provedor de IA retornou um erro: {$a}';
+$string['approve'] = 'Aprovar';
+$string['battle_result'] = 'Resultado da Batalha';
+$string['battle_rules'] = 'Regras da Batalha';
+$string['bot_enabled'] = 'Habilitar Bot IA';
+$string['bot_name'] = 'Mestre IA';
+$string['botdisabled'] = 'Batalhas contra a IA estão desativadas nesta atividade.';
+$string['challenge_bot'] = 'Desafiar Mestre IA';
+$string['challenge_player'] = 'Desafiar';
+$string['claude_apikey'] = 'Chave de API Anthropic Claude';
+$string['code_back_to_activity'] = 'Voltar para Atividade';
+$string['code_csv_battles'] = 'Batalhas';
+$string['code_csv_current_streak'] = 'Streak Atual';
+$string['code_csv_draws'] = 'Empates';
+$string['code_csv_email'] = 'E-mail';
+$string['code_csv_firstname'] = 'Nome';
+$string['code_csv_grade'] = 'Nota Calculada';
+$string['code_csv_lastname'] = 'Sobrenome';
+$string['code_csv_losses'] = 'Derrotas';
+$string['code_csv_max_streak'] = 'Maior Streak';
+$string['code_csv_points'] = 'Pontos';
+$string['code_csv_userid'] = 'ID Aluno';
+$string['code_csv_wins'] = 'Vitorias';
+$string['code_direct_challenge_sent'] = 'Desafio direto enviado para {$a}';
+$string['code_grades_recalculated'] = 'Notas recalculadas com sucesso no Livro de Notas!';
+$string['code_js_battleid_missing'] = 'Identificador da batalha não encontrado. Por favor, recarregue a página.';
+$string['code_js_correct'] = 'Correto!';
+$string['code_js_error'] = 'Erro';
+$string['code_js_generate_questions'] = 'Gerar Questões';
+$string['code_js_generating_ai'] = 'Gerando com IA...';
+$string['code_js_incorrect'] = 'Incorreto!';
+$string['code_js_next_question'] = 'Próxima Questão';
+$string['code_js_opponent'] = 'Oponente';
+$string['code_js_opponent_ai'] = 'Mestre IA';
+$string['code_js_points_earned'] = '{$a} pontos';
+$string['code_js_question_updated'] = 'Questão atualizada com sucesso!';
+$string['code_js_questions_generated'] = '{$a} questões geradas com sucesso!';
+$string['code_js_reload'] = 'Recarregar';
+$string['code_js_view_result'] = 'Ver Resultado';
+$string['code_js_your_colleague'] = 'seu colega';
+$string['code_msg_challenge_body'] = '{$a->firstname} desafiou você para uma Knowledge Battle em {$a->name}! Você tem {$a->hours} horas para responder.';
+$string['code_msg_challenge_link'] = 'Clique aqui para responder';
+$string['code_msg_challenge_small'] = 'Novo desafio de Knowledge Battle de {$a}';
+$string['code_msg_challenge_subject'] = 'Novo desafio no Knowledge Battle!';
+$string['code_msg_link'] = 'Link: {$a}';
+$string['code_msg_result_draw'] = 'Sua batalha contra {$a->opponent} terminou em empate! ({$a->myscore} - {$a->oppscore})';
+$string['code_msg_result_loss'] = 'Você perdeu sua batalha contra {$a->opponent}. Continue tentando! ({$a->myscore} - {$a->oppscore})';
+$string['code_msg_result_subject'] = 'Resultado da Knowledge Battle';
+$string['code_msg_result_win'] = 'Parabéns! Você venceu sua batalha contra {$a->opponent}! ({$a->myscore} - {$a->oppscore})';
+$string['code_msg_view_results'] = 'Ver resultados';
+$string['code_msg_wo_body'] = 'Aviso: Sua Knowledge Battle em {$a} expirará em breve! Responda para evitar perder por W.O.';
+$string['code_msg_wo_link'] = 'Clique aqui para jogar';
+$string['code_msg_wo_subject'] = 'Knowledge Battle expirando em breve!';
+$string['code_na'] = 'N/A';
+$string['code_quick_battle_open'] = 'Batalha Rápida (Fila aberta)';
+$string['code_report_pagetitle'] = 'Relatório Analítico';
+$string['code_result_draw'] = 'Empate';
+$string['code_result_loss'] = 'Derrota';
+$string['code_result_win'] = 'Vitória';
 $string['completionbattles'] = 'Exigir número mínimo de batalhas';
 $string['completionbattles_desc'] = 'Disputar pelo menos {$a} batalhas';
+$string['completionbattlesgroup'] = 'Batalhas disputadas';
 $string['completionwins'] = 'Exigir número mínimo de vitórias';
 $string['completionwins_desc'] = 'Vencer pelo menos {$a} batalhas';
-$string['messageprovider:challenge'] = 'Notificações de desafio';
-$string['messageprovider:battleresult'] = 'Notificações de resultado de batalha';
-$string['messageprovider:wowarning'] = 'Avisos de expiração de batalha (W.O.)';
-$string['incoming_challenges'] = 'Desafios Recebidos';
-$string['waiting_matches'] = 'Aguardando Oponente';
-$string['recent_matches'] = 'Batalhas Recentes';
-$string['accept_and_play'] = 'Aceitar e Jogar';
-$string['view_result'] = 'Ver Resultado';
-$string['error_already_waiting_opponent'] = 'Você já enviou um desafio a este colega e está aguardando a resposta dele.';
-$string['error_match_already_completed'] = 'Esta batalha já foi concluída.';
-$string['error_user_already_finished'] = 'Você já respondeu a todas as questões desta batalha.';
-$string['bot_name'] = 'Mestre IA';
-$string['ai_provider_desc'] = 'Selecione o provedor de IA utilizado para gerar questões.';
-$string['openrouter_apikey'] = 'Chave de API OpenRouter';
-$string['openai_apikey'] = 'Chave de API OpenAI';
-$string['gemini_apikey'] = 'Chave de API Google Gemini';
-$string['claude_apikey'] = 'Chave de API Anthropic Claude';
+$string['completionwinsgroup'] = 'Vitórias obtidas';
+$string['content_config'] = 'Configuração do Conteúdo';
+$string['content_scope'] = 'Escopo de Conteúdo';
+$string['crit_participation'] = 'Participação (Partidas Jogadas)';
+$string['crit_points'] = 'Pontuação no Ranking';
+$string['crit_wins'] = 'Número de Vitórias';
+$string['criteria_participation'] = 'Participação (Partidas Jogadas)';
+$string['criteria_points'] = 'Pontos Totais';
+$string['criteria_wins'] = 'Número de Vitórias';
+$string['dailylimitreached'] = 'Você atingiu o limite máximo de batalhas diárias.';
 $string['deepseek_apikey'] = 'Chave de API DeepSeek';
+$string['discard'] = 'Descartar';
+$string['display_config'] = 'Exibição & Critérios de Avaliação';
+$string['draw'] = 'Empate!';
+$string['draw_points'] = 'Pontos por Empate';
+$string['edit_question'] = 'Editar Questão';
+$string['error_ai_failed'] = 'A geração por IA falhou. Tente novamente mais tarde.';
+$string['error_already_waiting_opponent'] = 'Você já enviou um desafio a este colega e está aguardando a resposta dele.';
+$string['error_battle_expired'] = 'Esta batalha expirou.';
+$string['error_daily_limit'] = 'Você atingiu o limite máximo de batalhas diárias.';
+$string['error_generation_limit'] = 'Você atingiu o limite de geração de {$a} questões por hora para esta atividade.';
+$string['error_invalid_answer'] = 'Resposta enviada inválida.';
+$string['error_invalid_opponent'] = 'Oponente inválido selecionado.';
+$string['error_match_already_completed'] = 'Esta batalha já foi concluída.';
+$string['error_no_opponent'] = 'Nenhum oponente adequado encontrado no momento.';
+$string['error_no_questions'] = 'Não há questões disponíveis para esta batalha.';
+$string['error_user_already_finished'] = 'Você já respondeu a todas as questões desta batalha.';
+$string['event_answer_submitted'] = 'Resposta enviada';
+$string['event_battle_completed'] = 'Batalha concluída';
+$string['event_battle_expired'] = 'Batalha expirada (W.O.)';
+$string['event_battle_started'] = 'Batalha iniciada';
+$string['event_challenge_sent'] = 'Desafio enviado';
+$string['event_question_approved'] = 'Questão aprovada';
+$string['event_questions_generated'] = 'Questões geradas';
+$string['gemini_apikey'] = 'Chave de API Google Gemini';
+$string['generate_questions_btn'] = 'Gerar Questões';
+$string['grade_criteria'] = 'Critério de Avaliação';
 $string['groq_apikey'] = 'Chave de API Groq';
-$string['local_llm_baseurl'] = 'URL Base do LLM Local';
-$string['ai_model_default'] = 'Modelo de IA Padrão';
-$string['global_question_cache_ttl'] = 'TTL do Cache Global de Questões (segundos)';
-$string['antiflood_limit'] = 'Limite Anti-Flood (chamadas/hora)';
-
-// Help Guide
 $string['help_guide_btn'] = 'Ajuda & Guia de Uso';
-$string['help_guide_title'] = 'Guia de Configuração e Uso Passo a Passo';
 $string['help_guide_desc'] = 'Aprenda a configurar chaves de IA, criar atividades e gerenciar batalhas pedagógicas.';
-
-// Test AI Connection
-$string['test_ai_connection'] = 'Testar Conexão com IA';
-$string['test_ai_connection_btn'] = 'Testar Conexão com o Modelo e Provedor';
-$string['test_ai_connection_desc'] = 'Clique para verificar a conectividade com o provedor e modelo selecionados acima.';
-$string['test_ai_connection_testing'] = 'Testando conexão com a IA...';
-$string['test_ai_connection_success'] = 'Conexão realizada com sucesso!';
-$string['test_ai_connection_failed'] = 'Falha na conexão com a IA';
-$string['test_ai_connection_no_key'] = 'Por favor, informe ou salve uma chave de API para o provedor selecionado antes de testar.';
-
-// Privacy API
+$string['help_guide_title'] = 'Guia de Configuração e Uso Passo a Passo';
+$string['hours'] = 'horas';
+$string['incoming_challenges'] = 'Desafios Recebidos';
+$string['invalid_json_response'] = 'O provedor de IA retornou uma resposta que não pôde ser interpretada. Tente novamente.';
+$string['knowledgebattle:addinstance'] = 'Adicionar nova Batalha de Conhecimento';
+$string['knowledgebattle:challengebot'] = 'Desafiar Mestre IA';
+$string['knowledgebattle:generatequestions'] = 'Gerar questões com IA';
+$string['knowledgebattle:managequestions'] = 'Gerenciar questões';
+$string['knowledgebattle:view'] = 'Ver Batalha de Conhecimento';
+$string['knowledgebattle:viewallstats'] = 'Ver todas as estatísticas';
+$string['leaderboard'] = 'Classificação';
+$string['limits_config'] = 'Limites & Oponentes';
+$string['local_llm_baseurl'] = 'URL Base do LLM Local';
+$string['local_llm_baseurl_desc'] = 'URL base de um servidor compatível com OpenAI. O Moodle bloqueia hosts locais e privados por padrão: o host e a porta devem ser liberados em Administração do site > Geral > Segurança > Segurança HTTP (hosts bloqueados e portas permitidas do cURL).';
+$string['local_llm_models_found'] = '{$a} modelo(s) detectado(s) no servidor local';
+$string['local_llm_responding'] = 'Servidor local respondendo com sucesso';
+$string['loss_points'] = 'Pontos por Derrota';
+$string['manage_questions_tab'] = 'Gerenciar Questões';
+$string['match_bot'] = 'Batalha contra Bot';
+$string['match_direct'] = 'Desafio Direto';
+$string['match_matchmaking'] = 'Partida Ranqueada';
+$string['max_daily_battles'] = 'Máximo de Batalhas Diárias';
+$string['messageprovider:battleresult'] = 'Notificações de resultado de batalha';
+$string['messageprovider:challenge'] = 'Notificações de desafio';
+$string['messageprovider:wowarning'] = 'Avisos de expiração de batalha (W.O.)';
+$string['mode_ondemand'] = 'Geração Sob Demanda';
+$string['mode_pool'] = 'Pool Pré-gerado';
+$string['modulename'] = 'Batalha de Conhecimento';
+$string['modulenameplural'] = 'Batalhas de Conhecimento';
+$string['mustbepositive'] = 'O valor deve ser um número positivo maior que zero.';
+$string['my_stats'] = 'Minhas Estatísticas';
+$string['no_answer'] = 'Sem resposta';
+$string['notenoughquestions'] = 'Não há questões suficientes para iniciar a batalha.';
+$string['notyourmatch'] = 'Você não é um participante desta partida.';
+$string['openai_apikey'] = 'Chave de API OpenAI';
+$string['openrouter_apikey'] = 'Chave de API OpenRouter';
+$string['player'] = 'Jogador';
+$string['pluginadministration'] = 'Administração da Batalha de Conhecimento';
+$string['pluginname'] = 'Batalha de Conhecimento';
+$string['points_config'] = 'Configuração de Pontuação';
+$string['points_label'] = 'Pontos';
+$string['pool_size'] = 'Tamanho do Banco';
+$string['privacy:metadata:core_message'] = 'Notificações de desafio e de resultado de batalha são enviadas aos usuários pelo sistema de mensagens do Moodle.';
 $string['privacy:metadata:knowledgebattle_matches'] = 'Armazena informações sobre as sessões de partida entre jogadores.';
+$string['privacy:metadata:knowledgebattle_matches:p1_score'] = 'A pontuação do primeiro jogador.';
+$string['privacy:metadata:knowledgebattle_matches:p1_time_ms'] = 'O tempo total de resposta do primeiro jogador em milissegundos.';
+$string['privacy:metadata:knowledgebattle_matches:p2_score'] = 'A pontuação do segundo jogador.';
+$string['privacy:metadata:knowledgebattle_matches:p2_time_ms'] = 'O tempo total de resposta do segundo jogador em milissegundos.';
 $string['privacy:metadata:knowledgebattle_matches:player1_id'] = 'O ID do desafiante ou primeiro jogador da partida.';
 $string['privacy:metadata:knowledgebattle_matches:player2_id'] = 'O ID do oponente ou segundo jogador da partida.';
 $string['privacy:metadata:knowledgebattle_matches:winner_id'] = 'O ID do vencedor da partida, ou 0 em caso de empate.';
-$string['privacy:metadata:timecreated'] = 'O timestamp de quando o registro foi criado.';
-$string['privacy:metadata:timecompleted'] = 'O timestamp de quando a partida foi concluída.';
 $string['privacy:metadata:knowledgebattle_turns'] = 'Armazena respostas e informações de turnos submetidos pelos participantes.';
-$string['privacy:metadata:knowledgebattle_turns:userid'] = 'O ID do usuário que respondeu à questão.';
-$string['privacy:metadata:knowledgebattle_turns:answer'] = 'A resposta selecionada pelo usuário.';
 $string['privacy:metadata:knowledgebattle_turns:is_correct'] = 'Indica se a resposta enviada foi correta.';
+$string['privacy:metadata:knowledgebattle_turns:response_time_ms'] = 'O tempo que o usuário levou para responder, em milissegundos.';
+$string['privacy:metadata:knowledgebattle_turns:selected_option'] = 'A alternativa selecionada pelo usuário.';
+$string['privacy:metadata:knowledgebattle_turns:userid'] = 'O ID do usuário que respondeu à questão.';
 $string['privacy:metadata:knowledgebattle_user_stats'] = 'Armazena estatísticas gerais do usuário, pontuação, vitórias e derrotas.';
-$string['privacy:metadata:knowledgebattle_user_stats:userid'] = 'O ID do usuário associado a essas estatísticas.';
-$string['privacy:metadata:knowledgebattle_user_stats:matches_played'] = 'Total de partidas jogadas pelo usuário.';
-$string['privacy:metadata:knowledgebattle_user_stats:wins'] = 'Total de partidas vencidas pelo usuário.';
-$string['privacy:metadata:knowledgebattle_user_stats:losses'] = 'Total de partidas perdidas pelo usuário.';
-$string['privacy:metadata:knowledgebattle_user_stats:draws'] = 'Total de partidas empatadas pelo usuário.';
 $string['privacy:metadata:knowledgebattle_user_stats:current_points'] = 'Pontuação total acumulada pelo usuário.';
-
-
+$string['privacy:metadata:knowledgebattle_user_stats:current_streak'] = 'A sequência atual de vitórias do usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:draws'] = 'Total de partidas empatadas pelo usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:losses'] = 'Total de partidas perdidas pelo usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:matches_played'] = 'Total de partidas jogadas pelo usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:max_streak'] = 'A maior sequência de vitórias do usuário.';
+$string['privacy:metadata:knowledgebattle_user_stats:userid'] = 'O ID do usuário associado a essas estatísticas.';
+$string['privacy:metadata:knowledgebattle_user_stats:wins'] = 'Total de partidas vencidas pelo usuário.';
+$string['privacy:metadata:timecompleted'] = 'O timestamp de quando a partida foi concluída.';
+$string['privacy:metadata:timecreated'] = 'O timestamp de quando o registro foi criado.';
+$string['privacy:path:matches'] = 'Partidas';
+$string['privacy:path:stats'] = 'Estatísticas';
+$string['provider_claude'] = 'Claude';
+$string['provider_deepseek'] = 'DeepSeek';
+$string['provider_gemini'] = 'Gemini';
+$string['provider_groq'] = 'Groq';
+$string['provider_local_llm'] = 'LLM local';
+$string['provider_openai'] = 'OpenAI';
+$string['provider_openrouter'] = 'OpenRouter';
+$string['question_count'] = 'Contagem de Questões: {$a}';
+$string['question_pool'] = 'Pool/Banco de Questões';
+$string['questions_per_match'] = 'Questões por Partida';
+$string['quick_match'] = 'Batalha Rápida';
+$string['ranking_all'] = 'Todos os Usuários';
+$string['ranking_teacher'] = 'Apenas Professores';
+$string['ranking_teacheronly'] = 'Apenas Professores';
+$string['ranking_top10'] = 'Apenas Top 10';
+$string['ranking_visibility'] = 'Visibilidade do Ranking';
+$string['recent_matches'] = 'Batalhas Recentes';
+$string['report_tab'] = 'Relatório da Turma';
+$string['report_title'] = 'Relatório Analítico & Desempenho';
+$string['request_rematch'] = 'Solicitar Revanche';
+$string['scope_bank'] = 'Banco de Questões';
+$string['scope_questionbank'] = 'Banco de Questões';
+$string['scope_resource'] = 'Recurso Específico';
+$string['scope_section'] = 'Seção do Curso';
+$string['scope_topic'] = 'Tópico Personalizado';
+$string['start_battle'] = 'Iniciar Batalha';
+$string['status_cancelled'] = 'Cancelada';
+$string['status_completed'] = 'Concluída';
+$string['status_pending'] = 'Pendente';
+$string['status_waiting'] = 'Aguardando Oponente';
+$string['status_wo'] = 'W.O.';
+$string['str_draw'] = 'Empate!';
+$string['str_you_lost'] = 'Você Perdeu!';
+$string['str_you_won'] = 'Você Venceu!';
+$string['streak_label'] = 'Ofensiva';
+$string['supply_mode'] = 'Modo de Fornecimento';
+$string['supply_ondemand'] = 'Geração Sob Demanda';
+$string['supply_pool'] = 'Baseado em Pool/Banco';
+$string['task_check_expired'] = 'Verificar partidas expiradas da Batalha de Conhecimento';
+$string['test_ai_connection'] = 'Testar Conexão com IA';
+$string['test_ai_connection_btn'] = 'Testar Conexão com o Modelo e Provedor';
+$string['test_ai_connection_desc'] = 'Clique para verificar a conectividade com o provedor e modelo selecionados acima.';
+$string['test_ai_connection_failed'] = 'Falha na conexão com a IA';
+$string['test_ai_connection_latency'] = 'Latência';
+$string['test_ai_connection_model'] = 'Modelo';
+$string['test_ai_connection_no_key'] = 'Por favor, informe ou salve uma chave de API para o provedor selecionado antes de testar.';
+$string['test_ai_connection_provider'] = 'Provedor';
+$string['test_ai_connection_reply'] = 'Resposta';
+$string['test_ai_connection_success'] = 'Conexão realizada com sucesso!';
+$string['test_ai_connection_testing'] = 'Testando conexão com a IA...';
+$string['time_expired'] = 'Tempo esgotado';
+$string['time_per_question'] = 'Tempo por Questão (segundos)';
+$string['topic_text'] = 'Tópico / Texto';
+$string['tpl_accuracy_rate'] = 'Taxa de Acerto';
+$string['tpl_actions'] = 'Ações';
+$string['tpl_ai_master_bot'] = 'Mestre IA (Bot)';
+$string['tpl_answers'] = 'Respostas';
+$string['tpl_approved'] = 'Aprovadas';
+$string['tpl_back'] = 'Voltar';
+$string['tpl_back_to_lobby'] = 'Voltar ao Lobby';
+$string['tpl_battles'] = 'Batalhas';
+$string['tpl_bot_desc'] = 'Pratique agora mesmo contra o tutor virtual e receba feedback instantâneo.';
+$string['tpl_cancel'] = 'Cancelar';
+$string['tpl_challenge_sent_to'] = 'Desafio enviado para <strong>{$a}</strong>!';
+$string['tpl_challenged_you'] = '<strong>{$a}</strong> te desafiou para um duelo!';
+$string['tpl_close'] = 'Fechar';
+$string['tpl_completed'] = 'Concluídas';
+$string['tpl_confirm_regrade'] = 'Deseja recalcular todas as notas no Livro de Notas?';
+$string['tpl_correct'] = 'Acertou';
+$string['tpl_correct_answer'] = 'Resposta correta:';
+$string['tpl_correct_count'] = 'Acertos';
+$string['tpl_diag_title'] = 'Diagnóstico Pedagógico: Assertividade das Questões';
+$string['tpl_difficulty'] = 'Dificuldade';
+$string['tpl_direct_challenges'] = 'Desafios Diretos';
+$string['tpl_direct_desc'] = 'Escolha um colega específico para duelar de forma assíncrona.';
+$string['tpl_discarded'] = 'Descartadas';
+$string['tpl_expires_in'] = 'Expira em aprox. {$a->hours}h • {$a->count} questões';
+$string['tpl_explanation'] = 'Explicação:';
+$string['tpl_explanation_field'] = 'Explicação';
+$string['tpl_explanation_label'] = 'Explicação:';
+$string['tpl_export_csv'] = 'Exportar CSV';
+$string['tpl_gradebook_grade'] = 'Nota Gradebook';
+$string['tpl_loading'] = 'Carregando...';
+$string['tpl_lobby_manage_hint'] = 'Acesse a aba <a href="{$a->url}" class="alert-link font-weight-bold">Gerenciar Questões</a> para gerar questões com IA ou cadastrá-las.';
+$string['tpl_lobby_min_questions_warning'] = '<strong>Atenção:</strong> Esta batalha necessita de pelo menos <strong>{$a->min}</strong> questões aprovadas para iniciar partidas (atualmente existem <strong>{$a->count}</strong> aprovadas).';
+$string['tpl_losses'] = 'Derrotas';
+$string['tpl_max'] = 'Máx: {$a}';
+$string['tpl_next_question'] = 'Próxima Questão';
+$string['tpl_no_answers'] = 'Nenhuma resposta registrada ainda para gerar diagnóstico.';
+$string['tpl_no_questions_found'] = 'Nenhuma questão encontrada. Gere novas questões usando a IA.';
+$string['tpl_no_scores'] = 'Nenhum jogador pontuou ainda. Seja o primeiro!';
+$string['tpl_no_students'] = 'Nenhum aluno disputou batalhas até o momento.';
+$string['tpl_notify_result'] = 'Você será notificado quando o resultado estiver pronto.';
+$string['tpl_options_mark_correct'] = 'Opções (Marque a correta)';
+$string['tpl_pedagogical_warning'] = 'Atenção pedagógica: taxa de erro superior a 50%!';
+$string['tpl_pending'] = 'Pendentes';
+$string['tpl_play_again'] = 'Jogar Novamente';
+$string['tpl_player'] = 'Jogador';
+$string['tpl_pts'] = '{$a} pts';
+$string['tpl_question'] = 'Questão';
+$string['tpl_question_num'] = 'Questão {$a}';
+$string['tpl_question_review'] = 'Revisão das Questões';
+$string['tpl_question_statement'] = 'Enunciado da Questão';
+$string['tpl_question_x_of_y'] = 'Questão <span id="current-question-num">{$a->current}</span> de {$a->total}';
+$string['tpl_questions_to_generate'] = 'Quantidade de questões a gerar';
+$string['tpl_quick_battle'] = 'Batalha Rápida';
+$string['tpl_quick_battles'] = 'Batalhas Rápidas';
+$string['tpl_quick_desc'] = 'Encontre automaticamente um oponente do seu nível no Matchmaking.';
+$string['tpl_rank'] = 'Rank';
+$string['tpl_rank_position'] = 'Posição';
+$string['tpl_regrade'] = 'Recalcular Notas';
+$string['tpl_report_heading'] = 'Dashboard Analítico & Rendimento da Turma';
+$string['tpl_report_subheading'] = 'Estatísticas pedagógicas de engajamento, assertividade e rendimento individual.';
+$string['tpl_review_focus'] = 'Foco em Revisão';
+$string['tpl_save_changes'] = 'Salvar Modificações';
+$string['tpl_score'] = 'Pontuação';
+$string['tpl_score_recorded'] = 'Sua pontuação foi registrada. Assim que alguém entrar na fila, o duelo será resolvido!';
+$string['tpl_searching_opponent'] = 'Buscando um oponente na fila de batalhas rápidas...';
+$string['tpl_select_opponent'] = 'Selecione um oponente...';
+$string['tpl_statement'] = 'Enunciado';
+$string['tpl_status'] = 'Status';
+$string['tpl_status_approved'] = 'Aprovada';
+$string['tpl_status_discarded'] = 'Descartada';
+$string['tpl_status_pending'] = 'Pendente';
+$string['tpl_streak_full'] = 'Ofensiva (Streak)';
+$string['tpl_student'] = 'Aluno';
+$string['tpl_student_performance'] = 'Rendimento Individual dos Alunos ({$a} participantes)';
+$string['tpl_total_battles'] = 'Total de Batalhas';
+$string['tpl_vs'] = 'vs';
+$string['tpl_vs_upper'] = 'VS';
+$string['tpl_waiting_accept'] = 'Aguardando que o oponente aceite o desafio e conclua suas respostas.';
+$string['tpl_waiting_approved_questions'] = 'Aguardando questões aprovadas';
+$string['tpl_win_rate'] = 'Aproveitamento';
+$string['tpl_wins'] = 'Vitórias';
+$string['tpl_wo_inactivity'] = 'W.O. (Inatividade)';
+$string['tpl_wrong'] = 'Errou';
+$string['tpl_you'] = 'Você';
+$string['tpl_your_answer'] = 'Sua resposta:';
+$string['tpl_your_score'] = 'Seu placar: {$a->score} acertos • Prazo restante: {$a->hours}h';
+$string['unknown_provider'] = 'Provedor de IA desconhecido: {$a}';
+$string['view_leaderboard'] = 'Ver Ranking';
+$string['view_result'] = 'Ver Resultado';
+$string['waiting_matches'] = 'Aguardando Oponente';
+$string['waiting_opponent'] = 'Aguardando Oponente...';
+$string['win_points'] = 'Pontos por Vitória';
+$string['wo_timeout_hours'] = 'Tempo Limite para W.O. (horas)';
+$string['wo_win'] = 'Vitória por W.O.!';
+$string['you_lost'] = 'Você Perdeu!';
+$string['you_won'] = 'Você Venceu!';

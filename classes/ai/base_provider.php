@@ -1,10 +1,25 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Base AI Provider for Knowledge Battle.
  *
  * @package    mod_knowledgebattle
  * @copyright  2024 Junio / Knowledge Battle
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_knowledgebattle\ai;
@@ -26,7 +41,7 @@ abstract class base_provider implements provider_interface {
     protected $baseurl;
 
     /** @var int */
-    protected $timeout = 60;
+    protected $timeout = 45;
 
     /**
      * base_provider constructor.
@@ -54,7 +69,7 @@ abstract class base_provider implements provider_interface {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
 
-        $curl = new \curl(['ignoresecurity' => true]);
+        $curl = new \curl();
         $curl_headers = [];
         foreach ($headers as $k => $v) {
             $curl_headers[] = is_int($k) ? $v : "$k: $v";
@@ -67,7 +82,8 @@ abstract class base_provider implements provider_interface {
         ];
 
         $attempt = 0;
-        $max_attempts = 3;
+        // A single retry keeps a failing provider from holding the PHP worker for minutes.
+        $max_attempts = 2;
 
         while ($attempt < $max_attempts) {
             $curl->setHeader($curl_headers);
@@ -82,12 +98,11 @@ abstract class base_provider implements provider_interface {
             }
 
             $attempt++;
-            if ($attempt < $max_attempts) {
-                sleep(pow(2, $attempt));
-            }
         }
 
-        throw new \moodle_exception('api_error', 'mod_knowledgebattle', '', 'Failed after 3 attempts');
+        $status = (int) ($info['http_code'] ?? 0);
+        throw new \moodle_exception('api_error', 'mod_knowledgebattle', '',
+            $status ? "HTTP {$status}" : get_string('test_ai_connection_failed', 'mod_knowledgebattle'));
     }
 
     /**
@@ -168,7 +183,7 @@ Do not include markdown blocks or any other text, just the JSON.";
     /**
      * Template method to generate the quiz. Subclasses must implement the abstract methods to format the API call.
      */
-    public function generate_quiz(string $context, int $count, string $difficulty = 'medium', string $language = 'pt-BR'): array {
+    public function generate_quiz(string $context, int $count, string $difficulty = 'medium', string $language = 'English'): array {
         $prompt = $this->build_quiz_prompt($context, $count, $difficulty, $language);
         $payload = $this->build_payload($prompt);
         $headers = $this->build_headers();
@@ -234,7 +249,7 @@ Do not include markdown blocks or any other text, just the JSON.";
             global $CFG;
             require_once($CFG->libdir . '/filelib.php');
 
-            $curl = new \curl(['ignoresecurity' => true]);
+            $curl = new \curl();
             $curl_headers = [];
             foreach ($headers as $k => $v) {
                 $curl_headers[] = is_int($k) ? $v : "$k: $v";
@@ -273,27 +288,10 @@ Do not include markdown blocks or any other text, just the JSON.";
                 ];
             }
 
-            // Error diagnosis
-            $errormsg = '';
-            if (!empty($curl->error)) {
-                $errormsg = $curl->error;
-            } else if (!empty($raw_response)) {
-                $decoded = json_decode($raw_response);
-                if (isset($decoded->error->message)) {
-                    $errormsg = $decoded->error->message;
-                } else if (isset($decoded->error) && is_string($decoded->error)) {
-                    $errormsg = $decoded->error;
-                } else if (isset($decoded->message)) {
-                    $errormsg = $decoded->message;
-                } else {
-                    $errormsg = mb_substr(strip_tags($raw_response), 0, 200);
-                }
-            }
-
+            // Never echo the response body back: only the HTTP status or the cURL error is reported.
+            $errormsg = !empty($curl->error) ? $curl->error : '';
             if (empty($errormsg)) {
-                $errormsg = 'HTTP ' . ($http_code ?: 'Unknown Error');
-            } else if ($http_code > 0 && strpos($errormsg, (string)$http_code) === false) {
-                $errormsg = "HTTP {$http_code}: {$errormsg}";
+                $errormsg = 'HTTP ' . ($http_code ?: get_string('test_ai_connection_failed', 'mod_knowledgebattle'));
             }
 
             return [

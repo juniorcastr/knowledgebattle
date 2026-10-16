@@ -1,10 +1,25 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * View knowledgebattle.
  *
  * @package    mod_knowledgebattle
- * @copyright  2024
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require(__DIR__.'/../../config.php');
@@ -22,7 +37,7 @@ if ($id) {
     $course = $DB->get_record('course', ['id' => $knowledgebattle->course], '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('knowledgebattle', $knowledgebattle->id, $course->id, false, MUST_EXIST);
 } else {
-    print_error('invalidcoursemodule');
+    throw new \moodle_exception('invalidcoursemodule');
 }
 
 require_login($course, true, $cm);
@@ -32,7 +47,6 @@ require_capability('mod/knowledgebattle:view', $context);
 $PAGE->set_url('/mod/knowledgebattle/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($knowledgebattle->name));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->requires->css('/mod/knowledgebattle/styles.css');
 
 $event = \mod_knowledgebattle\event\course_module_viewed::create([
     'objectid' => $knowledgebattle->id,
@@ -50,55 +64,12 @@ if (!empty($knowledgebattle->intro)) {
     echo $OUTPUT->box(format_module_intro('knowledgebattle', $knowledgebattle, $cm->id), 'generalbox', 'intro');
 }
 
-echo html_writer::start_div('mod-knowledgebattle', [
-    'id' => 'knowledgebattle-content',
-    'data-battleid' => (int)$knowledgebattle->id,
-    'data-cmid' => (int)$cm->id
-]);
-
 if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions', $context)) {
     redirect(new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]));
 } else {
     $has_manage = has_capability('mod/knowledgebattle:managequestions', $context);
     $has_report = has_capability('mod/knowledgebattle:viewallstats', $context);
-    if ($has_manage || $has_report) {
-        echo html_writer::start_div('mb-3 d-flex flex-wrap align-items-center');
-        if ($has_manage) {
-            echo html_writer::link(
-                new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]),
-                '<i class="fa fa-question-circle mr-1 me-1"></i> ' . get_string('manage_questions_tab', 'mod_knowledgebattle'),
-                ['class' => 'btn btn-outline-secondary mr-2 me-2 mb-2']
-            );
-        }
-        if ($has_report) {
-            echo html_writer::link(
-                new moodle_url('/mod/knowledgebattle/report.php', ['id' => $cm->id]),
-                '<i class="fa fa-bar-chart mr-1 me-1"></i> ' . get_string('report_tab', 'mod_knowledgebattle'),
-                ['class' => 'btn btn-outline-info mr-2 me-2 mb-2']
-            );
-        }
-        echo html_writer::tag('button',
-            '<i class="fa fa-life-ring mr-1 me-1"></i> ' . get_string('help_guide_btn', 'mod_knowledgebattle'),
-            [
-                'type' => 'button',
-                'class' => 'btn btn-outline-primary mb-2',
-                'id' => 'btn-kb-help-guide',
-                'data-toggle' => 'modal',
-                'data-bs-toggle' => 'modal',
-                'data-target' => '#modal-kb-help',
-                'data-bs-target' => '#modal-kb-help'
-            ]
-        );
-        echo html_writer::end_div();
-
-        $is_pt = (strpos(current_language(), 'pt') === 0);
-        $helpcontext = [
-            'is_pt' => $is_pt,
-            'cmid' => (int)$cm->id,
-            'admin_url' => (new moodle_url('/admin/settings.php', ['section' => 'modsettingknowledgebattle']))->out()
-        ];
-        echo $OUTPUT->render_from_template('mod_knowledgebattle/help_modal', $helpcontext);
-    }
+    $is_pt = (strpos(current_language(), 'pt') === 0);
 
     // Fetch user stats.
     $userstats = $DB->get_record('knowledgebattle_user_stats', [
@@ -194,9 +165,9 @@ if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions'
             if ($m->match_type == 1 && !empty($m->player2_id)) {
                 $p2 = \core_user::get_user($m->player2_id);
                 $p2_name = $p2 ? fullname($p2) : get_string('player', 'mod_knowledgebattle');
-                $desc = "Desafio direto enviado para {$p2_name}";
+                $desc = get_string('code_direct_challenge_sent', 'mod_knowledgebattle', $p2_name);
             } else {
-                $desc = "Batalha Rápida (Fila aberta)";
+                $desc = get_string('code_quick_battle_open', 'mod_knowledgebattle');
             }
             $hours_left = !empty($m->timeexpire) ? max(1, (int)ceil(($m->timeexpire - $now) / 3600)) : 24;
             $waiting_matches[] = [
@@ -234,13 +205,13 @@ if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions'
         }
 
         if ($m->winner_id == 0) {
-            $label = 'Empate';
+            $label = get_string('code_result_draw', 'mod_knowledgebattle');
             $badge_class = 'badge-warning';
         } else if ($m->winner_id == $USER->id) {
-            $label = 'Vitória';
+            $label = get_string('code_result_win', 'mod_knowledgebattle');
             $badge_class = 'badge-success';
         } else {
-            $label = 'Derrota';
+            $label = get_string('code_result_loss', 'mod_knowledgebattle');
             $badge_class = 'badge-danger';
         }
 
@@ -290,6 +261,12 @@ if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions'
         'min_questions' => (int)$min_questions,
         'has_enough_questions' => (bool)$has_enough_questions,
         'has_manage' => (bool)$has_manage,
+        'has_report' => (bool)$has_report,
+        'show_toolbar' => ($has_manage || $has_report),
+        'questions_url' => (new moodle_url('/mod/knowledgebattle/questions.php', ['id' => $cm->id]))->out(false),
+        'report_url' => (new moodle_url('/mod/knowledgebattle/report.php', ['id' => $cm->id]))->out(false),
+        'is_pt' => $is_pt,
+        'admin_url' => (new moodle_url('/admin/settings.php', ['section' => 'modsettingknowledgebattle']))->out(false),
         'incoming_challenges' => $incoming_challenges,
         'has_incoming_challenges' => !empty($incoming_challenges),
         'incoming_count' => count($incoming_challenges),
@@ -310,5 +287,4 @@ if ($action === 'manage' && has_capability('mod/knowledgebattle:managequestions'
     ]]);
 }
 
-echo html_writer::end_div();
 echo $OUTPUT->footer();

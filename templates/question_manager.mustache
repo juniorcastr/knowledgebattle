@@ -1,3 +1,4 @@
+<div class="mod-knowledgebattle-manager" id="knowledgebattle-manager-content">
 <div class="knowledgebattle-question-manager" data-battleid="{{battleid}}" data-cmid="{{cmid}}">
     <input type="hidden" id="kb-battleid" value="{{battleid}}">
     <input type="hidden" id="kb-cmid" value="{{cmid}}">
@@ -6,7 +7,7 @@
             <div class="card text-center bg-light">
                 <div class="card-body">
                     <h2 class="text-success">{{stats.approved}}</h2>
-                    <div>Aprovadas</div>
+                    <div>{{#str}}tpl_approved, mod_knowledgebattle{{/str}}</div>
                 </div>
             </div>
         </div>
@@ -14,7 +15,7 @@
             <div class="card text-center bg-light">
                 <div class="card-body">
                     <h2 class="text-warning">{{stats.pending}}</h2>
-                    <div>Pendentes</div>
+                    <div>{{#str}}tpl_pending, mod_knowledgebattle{{/str}}</div>
                 </div>
             </div>
         </div>
@@ -22,16 +23,16 @@
             <div class="card text-center bg-light">
                 <div class="card-body">
                     <h2 class="text-danger">{{stats.discarded}}</h2>
-                    <div>Descartadas</div>
+                    <div>{{#str}}tpl_discarded, mod_knowledgebattle{{/str}}</div>
                 </div>
             </div>
         </div>
         <div class="col-md-3 d-flex align-items-center">
             <div class="input-group">
-                <input type="number" id="generate-questions-count" class="form-control form-control-lg text-center" value="10" min="1" style="max-width: 80px;" title="Quantidade de questões a gerar">
+                <input type="number" id="generate-questions-count" class="form-control form-control-lg text-center" value="10" min="1" style="max-width: 80px;" title="{{#str}}tpl_questions_to_generate, mod_knowledgebattle{{/str}}">
                 <div class="input-group-append">
                     <button class="btn btn-primary btn-lg" id="btn-generate-questions">
-                        <i class="fa fa-magic"></i> {{#str}}generate_questions_btn, knowledgebattle{{/str}}
+                        <i class="fa fa-magic"></i> {{#str}}generate_questions_btn, mod_knowledgebattle{{/str}}
                     </button>
                 </div>
             </div>
@@ -42,10 +43,10 @@
         <table class="table table-bordered">
             <thead class="thead-light">
                 <tr>
-                    <th>Questão</th>
-                    <th>Dificuldade</th>
-                    <th>Status</th>
-                    <th>Ações</th>
+                    <th>{{#str}}tpl_question, mod_knowledgebattle{{/str}}</th>
+                    <th>{{#str}}tpl_difficulty, mod_knowledgebattle{{/str}}</th>
+                    <th>{{#str}}tpl_status, mod_knowledgebattle{{/str}}</th>
+                    <th>{{#str}}tpl_actions, mod_knowledgebattle{{/str}}</th>
                 </tr>
             </thead>
             <tbody id="questions-table-body">
@@ -53,7 +54,7 @@
                 <tr data-id="{{id}}" data-correct="{{correct_index}}">
                     <td>
                         <strong class="q-text">{{question_text}}</strong>
-                        <div class="text-muted small mt-1">Explicação: <span class="q-explanation-display">{{explanation}}</span></div>
+                        <div class="text-muted small mt-1">{{#str}}tpl_explanation_label, mod_knowledgebattle{{/str}} <span class="q-explanation-display">{{explanation}}</span></div>
                         <input type="hidden" class="q-data-explanation" value="{{explanation}}">
                         <input type="hidden" class="q-data-option-0" value="{{option_0}}">
                         <input type="hidden" class="q-data-option-1" value="{{option_1}}">
@@ -62,20 +63,20 @@
                     </td>
                     <td><span class="badge badge-secondary">{{difficulty}}</span></td>
                     <td>
-                        {{#is_approved}}<span class="badge badge-success">Aprovada</span>{{/is_approved}}
-                        {{#is_pending}}<span class="badge badge-warning">Pendente</span>{{/is_pending}}
-                        {{#is_discarded}}<span class="badge badge-danger">Descartada</span>{{/is_discarded}}
+                        {{#is_approved}}<span class="badge badge-success">{{#str}}tpl_status_approved, mod_knowledgebattle{{/str}}</span>{{/is_approved}}
+                        {{#is_pending}}<span class="badge badge-warning">{{#str}}tpl_status_pending, mod_knowledgebattle{{/str}}</span>{{/is_pending}}
+                        {{#is_discarded}}<span class="badge badge-danger">{{#str}}tpl_status_discarded, mod_knowledgebattle{{/str}}</span>{{/is_discarded}}
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-success btn-approve" {{#is_approved}}disabled{{/is_approved}}>{{#str}}approve, knowledgebattle{{/str}}</button>
-                        <button class="btn btn-sm btn-outline-primary btn-edit">{{#str}}edit_question, knowledgebattle{{/str}}</button>
-                        <button class="btn btn-sm btn-danger btn-discard" {{#is_discarded}}disabled{{/is_discarded}}>{{#str}}discard, knowledgebattle{{/str}}</button>
+                        <button class="btn btn-sm btn-success btn-approve" {{#is_approved}}disabled{{/is_approved}}>{{#str}}approve, mod_knowledgebattle{{/str}}</button>
+                        <button class="btn btn-sm btn-outline-primary btn-edit">{{#str}}edit_question, mod_knowledgebattle{{/str}}</button>
+                        <button class="btn btn-sm btn-danger btn-discard" {{#is_discarded}}disabled{{/is_discarded}}>{{#str}}discard, mod_knowledgebattle{{/str}}</button>
                     </td>
                 </tr>
                 {{/questions}}
                 {{^questions}}
                 <tr>
-                    <td colspan="4" class="text-center text-muted">Nenhuma questão encontrada. Gere novas questões usando a IA.</td>
+                    <td colspan="4" class="text-center text-muted">{{#str}}tpl_no_questions_found, mod_knowledgebattle{{/str}}</td>
                 </tr>
                 {{/questions}}
             </tbody>
@@ -87,8 +88,8 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">{{#str}}edit_question, knowledgebattle{{/str}}</h5>
-                    <button type="button" class="close" data-dismiss="modal">
+                    <h5 class="modal-title">{{#str}}edit_question, mod_knowledgebattle{{/str}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{#str}}tpl_close, mod_knowledgebattle{{/str}}">
                         <span>&times;</span>
                     </button>
                 </div>
@@ -96,11 +97,11 @@
                     <form id="edit-question-form">
                         <input type="hidden" id="edit-question-id">
                         <div class="form-group">
-                            <label>Enunciado</label>
+                            <label>{{#str}}tpl_statement, mod_knowledgebattle{{/str}}</label>
                             <textarea class="form-control" id="edit-question-text" rows="3" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label>Opções (Marque a correta)</label>
+                            <label>{{#str}}tpl_options_mark_correct, mod_knowledgebattle{{/str}}</label>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend"><div class="input-group-text"><input type="radio" name="edit-correct" value="0" required></div></div>
                                 <input type="text" class="form-control" id="edit-option-0" required>
@@ -119,16 +120,18 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Explicação</label>
+                            <label>{{#str}}tpl_explanation_field, mod_knowledgebattle{{/str}}</label>
                             <textarea class="form-control" id="edit-explanation" rows="2" required></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btn-save-question">Salvar Modificações</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{#str}}tpl_cancel, mod_knowledgebattle{{/str}}</button>
+                    <button type="button" class="btn btn-primary" id="btn-save-question">{{#str}}tpl_save_changes, mod_knowledgebattle{{/str}}</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+</div>
+{{#view_url}}<a href="{{view_url}}" class="btn btn-secondary mt-3">{{#str}}code_back_to_activity, mod_knowledgebattle{{/str}}</a>{{/view_url}}

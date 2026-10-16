@@ -1,10 +1,25 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Analytics report and student performance dashboard for teachers.
  *
  * @package    mod_knowledgebattle
- * @copyright  2024
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require(__DIR__.'/../../config.php');
@@ -27,7 +42,7 @@ if ($action === 'regrade' && confirm_sesskey()) {
     \mod_knowledgebattle\grade_calculator::update_all_grades($knowledgebattle);
     redirect(
         new moodle_url('/mod/knowledgebattle/report.php', ['id' => $cm->id]),
-        'Notas recalculadas com sucesso no Livro de Notas!',
+        get_string('code_grades_recalculated', 'mod_knowledgebattle'),
         \core\output\notification::NOTIFY_SUCCESS
     );
 }
@@ -49,7 +64,20 @@ if ($action === 'exportcsv') {
     header('Content-Disposition: attachment; filename="' . $filename . '"');
 
     $output = fopen('php://output', 'w');
-    fputcsv($output, ['ID Aluno', 'Nome', 'Sobrenome', 'E-mail', 'Pontos', 'Batalhas', 'Vitorias', 'Derrotas', 'Empates', 'Streak Atual', 'Maior Streak', 'Nota Calculada']);
+    fputcsv($output, [
+        get_string('code_csv_userid', 'mod_knowledgebattle'),
+        get_string('code_csv_firstname', 'mod_knowledgebattle'),
+        get_string('code_csv_lastname', 'mod_knowledgebattle'),
+        get_string('code_csv_email', 'mod_knowledgebattle'),
+        get_string('code_csv_points', 'mod_knowledgebattle'),
+        get_string('code_csv_battles', 'mod_knowledgebattle'),
+        get_string('code_csv_wins', 'mod_knowledgebattle'),
+        get_string('code_csv_losses', 'mod_knowledgebattle'),
+        get_string('code_csv_draws', 'mod_knowledgebattle'),
+        get_string('code_csv_current_streak', 'mod_knowledgebattle'),
+        get_string('code_csv_max_streak', 'mod_knowledgebattle'),
+        get_string('code_csv_grade', 'mod_knowledgebattle'),
+    ]);
 
     foreach ($stats as $st) {
         $grade = \mod_knowledgebattle\grade_calculator::calculate_grade($knowledgebattle, $st->userid);
@@ -65,7 +93,7 @@ if ($action === 'exportcsv') {
             $st->draws,
             $st->current_streak,
             $st->max_streak,
-            $grade !== null ? $grade : 'N/A'
+            $grade !== null ? $grade : get_string('code_na', 'mod_knowledgebattle')
         ]);
     }
     fclose($output);
@@ -73,9 +101,8 @@ if ($action === 'exportcsv') {
 }
 
 $PAGE->set_url('/mod/knowledgebattle/report.php', ['id' => $cm->id]);
-$PAGE->set_title(format_string($knowledgebattle->name) . ' - Relatório Analítico');
+$PAGE->set_title(format_string($knowledgebattle->name) . ' - ' . get_string('code_report_pagetitle', 'mod_knowledgebattle'));
 $PAGE->set_heading(format_string($course->fullname));
-$PAGE->requires->css('/mod/knowledgebattle/styles.css');
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('report_title', 'mod_knowledgebattle'));
@@ -154,6 +181,7 @@ $templatecontext = [
     'cmid' => (int)$cm->id,
     'battleid' => (int)$knowledgebattle->id,
     'sesskey' => sesskey(),
+    'view_url' => (new moodle_url('/mod/knowledgebattle/view.php', ['id' => $cm->id]))->out(false),
     'stats_summary' => [
         'total_matches' => $total_matches,
         'completed_matches' => $completed_matches,
@@ -169,13 +197,6 @@ $templatecontext = [
     'has_questions' => !empty($question_analytics)
 ];
 
-echo html_writer::start_div('mod-knowledgebattle-report');
 echo $OUTPUT->render_from_template('mod_knowledgebattle/report', $templatecontext);
-echo html_writer::end_div();
-
-echo html_writer::div(
-    html_writer::link(new moodle_url('/mod/knowledgebattle/view.php', ['id' => $cm->id]), '← Voltar para a Atividade', ['class' => 'btn btn-secondary mt-4']),
-    'text-center'
-);
 
 echo $OUTPUT->footer();

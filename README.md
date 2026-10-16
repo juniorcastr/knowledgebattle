@@ -25,7 +25,6 @@ Students can challenge their peers to asynchronous PvP knowledge duels or compet
 * **📋 Question Management & Curation**: Teachers can review, edit, approve, or discard AI-generated questions before they enter the active match pool.
 * **🏆 Leaderboard & Streaks**: Real-time course ranking displaying points, wins, losses, win rates, and current winning streaks.
 * **📊 Teacher Analytics Report**: Dedicated class performance dashboard with question difficulty analysis, discrimination index, student participation rates, and match logs.
-* **📱 Moodle App Compatible**: Native mobile support declarations via `db/mobile.php`.
 * **🔒 Privacy & GDPR Ready**: Full implementation of Moodle Privacy API (`\core_privacy\local\metadata\provider`) supporting data export and deletion.
 
 ---

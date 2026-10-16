@@ -1,10 +1,25 @@
 <?php
+// This file is part of Moodle - https://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
 /**
  * Notification Manager for knowledgebattle
  *
  * @package    mod_knowledgebattle
- * @copyright  2024
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2024 Junio
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace mod_knowledgebattle;
@@ -23,6 +38,19 @@ class notification_manager {
         return $url->out(false);
     }
 
+    /**
+     * Gets a string of this plugin in the language of the message recipient.
+     *
+     * @param string $key String identifier.
+     * @param object $recipient Recipient user record.
+     * @param mixed $a Optional string placeholders.
+     * @return string
+     */
+    private static function str(string $key, object $recipient, $a = null): string {
+        $lang = !empty($recipient->lang) ? $recipient->lang : $GLOBALS['CFG']->lang;
+        return get_string_manager()->get_string($key, 'mod_knowledgebattle', $a, $lang);
+    }
+
     public static function notify_challenge(object $match, object $battle, int $challengerid, int $challengedid): void {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/message/lib.php');
@@ -33,18 +61,26 @@ class notification_manager {
         
         $url_string = self::get_view_url($battle);
         
-        $message = "{$challenger->firstname} has challenged you to a Knowledge Battle in {$battle->name}! You have {$timeout} hours to respond.\n\nLink: {$url_string}";
+        $a = (object)[
+            'firstname' => $challenger->firstname,
+            'name' => $battle->name,
+            'hours' => $timeout,
+        ];
+        $message = self::str('code_msg_challenge_body', $challenged, $a) . "\n\n" .
+            self::str('code_msg_link', $challenged, $url_string);
         
         $msg = new \core\message\message();
         $msg->component = 'mod_knowledgebattle';
         $msg->name = 'challenge';
         $msg->userfrom = $challenger;
         $msg->userto = $challenged;
-        $msg->subject = 'New Knowledge Battle Challenge!';
+        $msg->subject = self::str('code_msg_challenge_subject', $challenged);
         $msg->fullmessage = $message;
         $msg->fullmessageformat = FORMAT_PLAIN;
-        $msg->fullmessagehtml = "<p>{$challenger->firstname} has challenged you to a Knowledge Battle in <strong>{$battle->name}</strong>! You have {$timeout} hours to respond.</p><p><a href=\"{$url_string}\">Click here to respond</a></p>";
-        $msg->smallmessage = "New Knowledge Battle challenge from {$challenger->firstname}";
+        $a->name = '<strong>' . $battle->name . '</strong>';
+        $msg->fullmessagehtml = '<p>' . self::str('code_msg_challenge_body', $challenged, $a) . '</p><p><a href="' .
+            $url_string . '">' . self::str('code_msg_challenge_link', $challenged) . '</a></p>';
+        $msg->smallmessage = self::str('code_msg_challenge_small', $challenged, $challenger->firstname);
         $msg->notification = 1;
         
         message_send($msg);
@@ -68,19 +104,24 @@ class notification_manager {
             $msg->name = 'battleresult';
             $msg->userfrom = $noreply;
             $msg->userto = $user;
-            $msg->subject = 'Knowledge Battle Result';
+            $msg->subject = self::str('code_msg_result_subject', $user);
             
+            $a = (object)[
+                'opponent' => $opponent->firstname,
+                'myscore' => $my_score,
+                'oppscore' => $opp_score,
+            ];
             if ($is_draw) {
-                $content = "Your battle against {$opponent->firstname} ended in a draw! ({$my_score} - {$opp_score})";
+                $content = self::str('code_msg_result_draw', $user, $a);
             } elseif ($is_winner) {
-                $content = "Congratulations! You won your battle against {$opponent->firstname}! ({$my_score} - {$opp_score})";
+                $content = self::str('code_msg_result_win', $user, $a);
             } else {
-                $content = "You lost your battle against {$opponent->firstname}. Keep trying! ({$my_score} - {$opp_score})";
+                $content = self::str('code_msg_result_loss', $user, $a);
             }
             
-            $msg->fullmessage = $content . "\n\nLink: {$url_string}";
+            $msg->fullmessage = $content . "\n\n" . self::str('code_msg_link', $user, $url_string);
             $msg->fullmessageformat = FORMAT_PLAIN;
-            $msg->fullmessagehtml = "<p>{$content}</p><p><a href=\"{$url_string}\">View Results</a></p>";
+            $msg->fullmessagehtml = "<p>{$content}</p><p><a href=\"{$url_string}\">" . self::str('code_msg_view_results', $user) . "</a></p>";
             $msg->smallmessage = $content;
             $msg->notification = 1;
             
@@ -104,17 +145,17 @@ class notification_manager {
         
         $url_string = self::get_view_url($battle);
         
-        $content = "Warning: Your Knowledge Battle in {$battle->name} will expire soon! Respond to avoid losing by W.O.";
+        $content = self::str('code_msg_wo_body', $user, $battle->name);
         
         $msg = new \core\message\message();
         $msg->component = 'mod_knowledgebattle';
         $msg->name = 'wowarning';
         $msg->userfrom = $noreply;
         $msg->userto = $user;
-        $msg->subject = 'Knowledge Battle Expiring Soon!';
-        $msg->fullmessage = $content . "\n\nLink: {$url_string}";
+        $msg->subject = self::str('code_msg_wo_subject', $user);
+        $msg->fullmessage = $content . "\n\n" . self::str('code_msg_link', $user, $url_string);
         $msg->fullmessageformat = FORMAT_PLAIN;
-        $msg->fullmessagehtml = "<p>{$content}</p><p><a href=\"{$url_string}\">Click here to play</a></p>";
+        $msg->fullmessagehtml = "<p>{$content}</p><p><a href=\"{$url_string}\">" . self::str('code_msg_wo_link', $user) . "</a></p>";
         $msg->smallmessage = $content;
         $msg->notification = 1;
         
